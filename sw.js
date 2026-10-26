@@ -1,6 +1,6 @@
 // Service worker de BodyMap Rehab: guarda la app para abrirla sin conexión.
 // Los vídeos (YouTube, Vimeo) siempre necesitan red y no se guardan.
-const CACHE = "bodymap-v6";
+const CACHE = "bodymap-v7";
 const SHELL = [
   "./",
   "index.html",
@@ -24,15 +24,40 @@ self.addEventListener("install", (event) => {
 });
 
 self.addEventListener("activate", (event) => {
+  event.waitUntil((async () => {
+    const old = (await caches.keys()).filter((k) => k !== CACHE);
+    await Promise.all(old.map((k) => caches.delete(k)));
+    await self.clients.claim();
+    // Había una versión anterior: la página abierta sigue con los archivos viejos.
+    if (old.length) notifyUpdate();
+  })());
+});
+
+async function notifyUpdate() {
+  for (const client of await self.clients.matchAll({ type: "window" })) {
+    client.postMessage({ type: "update-ready" });
+  }
+}
+
+// GitHub Pages manda ETag y Last-Modified; si no hay ninguno no se avisa.
+function changed(cached, fresh) {
+  const tag = (r) => (r.headers.get("etag") || r.headers.get("last-modified") || "").replace(/^W\//, "");
+  return Boolean(tag(cached) && tag(fresh) && tag(cached) !== tag(fresh));
+}
+
+// "Reload" pide descargar toda la app antes de recargar, para no mezclar versiones.
+self.addEventListener("message", (event) => {
+  if (event.data?.type !== "refresh") return;
   event.waitUntil(
-    caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
-      .then(() => self.clients.claim())
+    caches.open(CACHE)
+      .then((cache) => cache.addAll(SHELL.map((url) => new Request(url, { cache: "reload" }))))
+      .catch(() => {})
+      .then(() => event.source?.postMessage({ type: "refreshed" }))
   );
 });
 
-// Se sirve lo guardado al momento y se actualiza en segundo plano,
-// así un cambio en data.js aparece la siguiente vez que se abre la app.
+// Se sirve lo guardado al momento y se actualiza en segundo plano.
+// Si un archivo cambió, la página muestra el aviso de nueva versión.
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   if (request.method !== "GET" || new URL(request.url).origin !== self.location.origin) return;
@@ -42,7 +67,10 @@ self.addEventListener("fetch", (event) => {
       const cached = await cache.match(request, { ignoreSearch: true });
       const network = fetch(request)
         .then((response) => {
-          if (response.ok) cache.put(request, response.clone());
+          if (response.ok) {
+            if (cached && changed(cached, response)) notifyUpdate();
+            cache.put(request, response.clone());
+          }
           return response;
         })
         .catch(() => cached || (request.mode === "navigate" ? cache.match("index.html") : Response.error()));

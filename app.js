@@ -511,5 +511,47 @@
 
   if ("serviceWorker" in navigator && location.protocol !== "file:") {
     window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+    setupUpdates();
+  }
+
+  // ---------- Aviso de nueva versión ----------
+
+  function setupUpdates() {
+    const sw = navigator.serviceWorker;
+    const toast = $(".update-toast");
+    let dismissed = false;
+
+    sw.addEventListener("message", (e) => {
+      if (e.data?.type === "update-ready" && !dismissed) toast.hidden = false;
+    });
+
+    $("[data-update-dismiss]", toast).addEventListener("click", () => {
+      dismissed = true;
+      toast.hidden = true;
+    });
+
+    $("[data-update-reload]", toast).addEventListener("click", async (e) => {
+      e.currentTarget.disabled = true;
+      const reg = await sw.getRegistration();
+      if (!reg?.active) return location.reload();
+      // Se recarga cuando el service worker termina de bajar la app, o a los 8 s.
+      sw.addEventListener("message", (m) => { if (m.data?.type === "refreshed") location.reload(); });
+      setTimeout(() => location.reload(), 8000);
+      reg.active.postMessage({ type: "refresh" });
+    });
+
+    // Las tablets de la clínica pueden tener la app abierta horas: se revisa
+    // al volver a la app y cada 30 minutos.
+    const check = async () => {
+      if (document.hidden || !navigator.onLine) return;
+      const reg = await sw.getRegistration();
+      if (!reg) return;
+      reg.update().catch(() => {});
+      for (const url of ["index.html", "app.js", "data.js", "styles.css"]) {
+        fetch(url, { cache: "no-cache" }).catch(() => {});
+      }
+    };
+    document.addEventListener("visibilitychange", check);
+    setInterval(check, 30 * 60 * 1000);
   }
 })();

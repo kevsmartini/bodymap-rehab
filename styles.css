@@ -687,6 +687,32 @@ h1 {
   .phase-toggle .tag { padding: .875rem 1rem; }
 }
 
+/* ---------- Aviso de nueva versión ---------- */
+
+.update-toast {
+  position: fixed;
+  z-index: 10;
+  left: 50%;
+  bottom: max(1.25rem, env(safe-area-inset-bottom));
+  translate: -50% 0;
+  width: max-content;
+  max-width: calc(100vw - 2rem);
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .375rem .375rem .375rem 1.125rem;
+  background: var(--rail-raised);
+  color: var(--rail-text);
+  border: 1px solid var(--rail-line);
+  border-radius: var(--radius);
+  box-shadow: 0 .5rem 1.5rem rgba(9, 37, 28, .28);
+  font-weight: 600;
+  animation: toast-in .3s var(--ease-out);
+}
+.update-toast[hidden] { display: none; }
+.update-toast .icon-btn { width: 2.75rem; height: 2.75rem; border-radius: var(--radius-s); }
+@keyframes toast-in { from { opacity: 0; translate: -50% 1rem; } }
+
 /* ---------- Tablet vertical y móvil ---------- */
 
 @media (max-width: 56rem) {
