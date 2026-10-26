@@ -1,6 +1,6 @@
 // Service worker de BodyMap Rehab: guarda la app para abrirla sin conexión.
 // Los vídeos (YouTube, Vimeo) siempre necesitan red y no se guardan.
-const CACHE = "bodymap-v7";
+const CACHE = "bodymap-v8";
 const SHELL = [
   "./",
   "index.html",
@@ -10,9 +10,12 @@ const SHELL = [
   "manifest.webmanifest",
   "fonts/atkinson-hyperlegible-next-latin.woff2",
   "fonts/barlow-condensed-700-latin.woff2",
-  "icons/icon.svg",
+  "icons/favicon-48.png",
+  "icons/apple-touch-icon.png",
   "icons/icon-192.png",
   "icons/icon-512.png",
+  "icons/icon-maskable-192.png",
+  "icons/icon-maskable-512.png",
   "anatomy-viewer.js",
   "anatomy-data.js",
   "vendor/three.module.min.js",
