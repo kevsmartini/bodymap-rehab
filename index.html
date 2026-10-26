@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>BodyMap Rehab</title>
+  <meta name="description" content="Rehab exercise videos by body area and phase, for showing patients in clinic.">
+  <meta name="theme-color" content="#09251C">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="preload" href="fonts/atkinson-hyperlegible-next-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
+</head>
+<body data-view="home" data-face="front">
+
+  <svg width="0" height="0" class="sprite" aria-hidden="true">
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5 8 12l7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8M17 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-anatomy" viewBox="0 0 24 24"><path d="M12 3 4.5 7.2v9.6L12 21l7.5-4.2V7.2z M4.5 7.2 12 11.4l7.5-4.2M12 11.4V21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 4 8 4-8 4-8-4z M4 12l8 4 8-4M4 16l8 4 8-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="i-offline" viewBox="0 0 24 24"><path d="M3 3l18 18M8.5 16.5a5 5 0 0 1 7 0M5 13a10 10 0 0 1 5-2.7M14.5 10.4A10 10 0 0 1 19 13M2 9.5a15 15 0 0 1 4.3-2.7M10.7 6.1A15 15 0 0 1 22 9.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="20" r="1.2" fill="currentColor"/></symbol>
+  </svg>
+
+  <div class="app">
+    <aside class="picker" aria-label="Choose body area">
+      <header class="brand">
+        <a href="#/" class="brand-name">BodyMap Rehab</a>
+        <p class="offline-chip" role="status"><svg class="icon"><use href="#i-offline"/></svg>Offline</p>
+      </header>
+
+      <div class="picker-body">
+        <div class="map">
+          <div class="seg seg-dark" role="group" aria-label="Body view">
+            <button type="button" data-face="front" aria-pressed="true">Front</button>
+            <button type="button" data-face="back" aria-pressed="false">Back</button>
+          </div>
+          <div class="figure">
+            <p class="laterality" aria-hidden="true"><span data-l></span><span data-r></span></p>
+            <svg class="body" viewBox="22 4 156 432" role="group" aria-label="Body map">
+              <g class="silhouette" aria-hidden="true">
+                <ellipse cx="100" cy="32" rx="19" ry="23"/>
+                <rect x="91" y="50" width="18" height="24" rx="6"/>
+                <path d="M70 72Q100 64 130 72L137 92Q133 140 126 172Q130 198 133 226L67 226Q70 198 74 172Q67 140 63 92Z"/>
+                <g class="limb">
+                  <path d="M60 88 48 160M140 88 152 160" stroke-width="22"/>
+                  <path d="M48 160 40 228M152 160 160 228" stroke-width="17"/>
+                  <path d="M84 224 82 320M116 224 118 320" stroke-width="30"/>
+                  <path d="M82 320 84 406M118 320 116 406" stroke-width="22"/>
+                </g>
+                <ellipse cx="37" cy="246" rx="9" ry="14"/>
+                <ellipse cx="163" cy="246" rx="9" ry="14"/>
+                <ellipse cx="83" cy="420" rx="12" ry="10"/>
+                <ellipse cx="117" cy="420" rx="12" ry="10"/>
+                <path class="spine" d="M100 76V222" />
+              </g>
+              <g class="spots"></g>
+            </svg>
+          </div>
+        </div>
+
+        <nav class="regions" aria-label="Body areas"></nav>
+      </div>
+    </aside>
+
+    <main class="content" id="content" tabindex="-1">
+      <p class="sample-note" hidden>Sample catalog: placeholder exercises with no videos linked yet. Edit them in <code>data.js</code>.</p>
+
+      <section class="home" aria-labelledby="home-title">
+        <h1 id="home-title">Where does it hurt?</h1>
+        <p class="lede">Tap the area on the map or pick it from the list.</p>
+        <h2 class="legend-title">The phases, from lightest to heaviest load</h2>
+        <ol class="legend"></ol>
+      </section>
+
+      <section class="region" aria-labelledby="region-title">
+        <a href="#/" class="back"><svg class="icon"><use href="#i-back"/></svg>Areas</a>
+        <div class="region-head">
+          <h1 id="region-title"></h1>
+          <button type="button" class="btn btn-outline anat-open" data-anatomy><svg class="icon"><use href="#i-anatomy"/></svg>Anatomy</button>
+          <div class="seg seg-light side-switch" role="group" aria-label="Patient's side">
+            <button type="button" data-side="right">Right</button>
+            <button type="button" data-side="left">Left</button>
+          </div>
+        </div>
+        <p class="region-meta"></p>
+        <div class="phases"></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog class="player" aria-labelledby="player-title">
+    <div class="player-bar">
+      <span class="tag"><b class="tag-n"></b><span class="tag-name"></span><span class="meter" aria-hidden="true"><i></i><i></i><i></i><i></i></span></span>
+      <button type="button" class="icon-btn" data-close aria-label="Close video"><svg class="icon"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="player-stage"></div>
+    <div class="player-foot">
+      <div class="player-info">
+        <h2 id="player-title"></h2>
+        <p class="player-meta"></p>
+      </div>
+      <div class="player-nav">
+        <a class="btn btn-ghost player-ext" target="_blank" rel="noopener" hidden><svg class="icon"><use href="#i-external"/></svg>Open on platform</a>
+        <button type="button" class="btn btn-ghost" data-step="-1"><svg class="icon"><use href="#i-back"/></svg>Previous</button>
+        <button type="button" class="btn btn-light" data-step="1">Next<svg class="icon"><use href="#i-next"/></svg></button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="anatomy" aria-labelledby="anat-title">
+    <header class="anat-bar">
+      <div>
+        <h2 id="anat-title">Anatomy</h2>
+        <p class="anat-meta"></p>
+      </div>
+      <button type="button" class="icon-btn" data-anat-close aria-label="Close anatomy viewer"><svg class="icon"><use href="#i-close"/></svg></button>
+    </header>
+    <div class="anat-body">
+      <div class="anat-stage">
+        <canvas class="anat-canvas"></canvas>
+        <p class="anat-status" role="status">Loading 3D view…</p>
+        <p class="anat-hint">
+          <span class="hint-mouse">Drag to rotate · Scroll to zoom · Right-drag to move up or down</span>
+          <span class="hint-touch">Drag to rotate · Pinch to zoom · Two-finger drag to move</span>
+        </p>
+        <div class="anat-tools">
+          <div class="seg seg-dark" role="group" aria-label="Camera view">
+            <button type="button" data-view="front" aria-pressed="true">Front</button>
+            <button type="button" data-view="side" aria-pressed="false">Side</button>
+            <button type="button" data-view="back" aria-pressed="false">Back</button>
+          </div>
+          <button type="button" class="anat-layers" data-layers aria-pressed="false"><svg class="icon"><use href="#i-layers"/></svg>Separate layers</button>
+        </div>
+      </div>
+      <aside class="anat-panel" aria-label="Structures">
+        <div class="anat-info" aria-live="polite">
+          <p class="anat-kind"></p>
+          <h3 class="anat-name">Tap a structure</h3>
+          <p class="anat-desc"></p>
+        </div>
+        <div class="anat-list"></div>
+      </aside>
+    </div>
+  </dialog>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
