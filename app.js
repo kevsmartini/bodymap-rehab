@@ -102,6 +102,16 @@
     return `${m}:${s}`;
   }
 
+  // Para lectores de pantalla: "26 seconds", "1 minute 4 seconds".
+  function spokenDuration(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    const parts = [];
+    if (m) parts.push(plural(m, "minute", "minutes"));
+    if (s || !m) parts.push(plural(s, "second", "seconds"));
+    return parts.join(" ");
+  }
+
   function total(exercises) {
     return exercises.reduce((sum, e) => sum + (e.duration || 0), 0);
   }
@@ -252,7 +262,7 @@
     els.meta.textContent = metaParts.join(" · ");
 
     if (!all.length) {
-      els.phases.replaceChildren(h("p", { class: "region-empty", text: "No exercises for this area yet. Add them in data.js." }));
+      els.phases.replaceChildren(h("p", { class: "region-empty", text: "No exercises for this area yet." }));
       return;
     }
 
@@ -314,7 +324,7 @@
       ),
       h("span", { class: "v-row" },
         h("span", { class: "v-title", text: ex.title }),
-        ex.duration ? h("span", { class: "v-dur", text: clock(ex.duration), "aria-label": `${Math.round(ex.duration / 60)} minutes` }) : null
+        ex.duration ? h("span", { class: "v-dur", text: clock(ex.duration), "aria-label": spokenDuration(ex.duration) }) : null
       )
     );
   }
@@ -369,7 +379,7 @@
 
     let stage;
     if (!video) {
-      stage = message(null, "No video linked yet", "Add a YouTube or Vimeo link in data.js and it will play here.");
+      stage = message(null, "No video yet", "This exercise doesn't have a demonstration video yet.");
     } else if (!navigator.onLine) {
       stage = message("i-offline", "You're offline", "Videos stream from the internet. Try again once you're back online.");
     } else if (video.embed) {
