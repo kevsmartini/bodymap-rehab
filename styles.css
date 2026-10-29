@@ -93,6 +93,9 @@ code { font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; font-size:
   height: 100dvh;
 }
 
+/* Sin esto, la columna 1fr crece con el contenido y en 320 px aparece scroll lateral. */
+.picker, .content { min-width: 0; }
+
 .picker {
   background: var(--rail);
   color: var(--rail-text);
@@ -597,6 +600,7 @@ h1 {
   font-weight: 600;
   color: var(--forest);
   pointer-events: none;
+  text-wrap: balance;
 }
 .anat-hint span { background: rgba(248, 234, 220, .86); padding: .2rem .5rem; border-radius: var(--radius-s); line-height: 1.9; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
 .hint-touch { display: none; }
@@ -761,6 +765,28 @@ h1 {
   .player-nav { display: grid; grid-template-columns: 1fr 1fr; }
   .player-ext { grid-column: 1 / -1; justify-content: center; }
   .player-nav .btn { justify-content: center; }
+}
+
+/* ---------- Móvil en horizontal ---------- */
+
+/* Pantalla baja: el vídeo ocupa lo que sobra y los botones quedan siempre a la vista. */
+@media (orientation: landscape) and (max-height: 32rem) {
+  .player { width: 100vw; max-width: 100vw; height: 100dvh; max-height: 100dvh; margin: 0; border-radius: 0; overflow: hidden; }
+  .player[open] { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; }
+  .player-stage { aspect-ratio: auto; min-height: 0; }
+  .player-foot { flex-direction: row; flex-wrap: nowrap; align-items: center; gap: 1rem; padding: .5rem 1rem; }
+  .player-info { flex: 1; min-width: 0; }
+  .player-info h2 { font-size: 1.125rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .player-meta { font-size: .8125rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .player-nav { display: flex; flex: none; flex-wrap: nowrap; }
+}
+
+/* El visor 3D pone la lista al lado del modelo en vez de debajo. */
+@media (max-width: 56rem) and (orientation: landscape) and (max-height: 32rem) {
+  .anat-bar { padding-block: .25rem; }
+  .anat-bar h2 { font-size: 1.125rem; }
+  .anat-body { grid-template-columns: minmax(0, 1fr) 17rem; grid-template-rows: none; }
+  .anat-panel { border-top: 0; border-left: 1px solid var(--rail-line); max-height: none; }
 }
 
 @media (max-width: 22rem) {
