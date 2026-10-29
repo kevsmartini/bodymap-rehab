@@ -37,7 +37,9 @@ Es una herramienta de apoyo a la valoración clínica que se organiza por partes
 - Por cada parte del cuerpo, opciones de rehabilitación con vídeo, ordenadas por fase de rehabilitación.
 - Los vídeos son enlaces externos (YouTube, Vimeo u otras plataformas), enlazados o incrustados. La app no aloja vídeo.
 - Al ser PWA se puede instalar. Como los vídeos son externos, verlos necesita conexión; qué funciona sin conexión está por decidir.
-- **Por decidir:** qué fases concretas hay y cómo se llaman, si hay cuentas o datos de pacientes, y quién gestiona y actualiza el catálogo de enlaces.
+- Cuatro fases: Pain control, Mobility, Strength y Return to activity.
+- Sin cuentas ni datos de pacientes (decidido el 2026-10-26): es una guía solo para el terapeuta.
+- El catálogo se mantiene editando `data.js` a petición del usuario y subiéndolo a GitHub (decidido el 2026-10-26). Una pantalla de administración solo si los cambios pasan a ser frecuentes o los hace otra persona.
 - La interfaz de la app está en inglés (lo pidió el usuario el 2026-10-23), aunque el trabajo con el usuario se haga en español.
 
 ## Brand Commitments
@@ -46,7 +48,7 @@ Es una herramienta de apoyo a la valoración clínica que se organiza por partes
 
 ## Evidence on Hand
 
-Todavía no hay contenido: ni catálogo de ejercicios, ni enlaces de vídeo, ni recursos de marca. No hay que inventarse ejercicios, indicaciones clínicas, testimonios ni avales profesionales. Hasta que llegue el contenido real, cualquier contenido de ejemplo tiene que verse claramente como relleno.
+El catálogo real llegó el 2026-10-26: 108 ejercicios de demostraciones públicas del NHS (12 por zona, 3 por fase), sacados de los PDF del usuario. También hay icono de la app (columna vertebral). No hay que inventarse ejercicios, indicaciones clínicas, testimonios ni avales profesionales.
 
 ## Product Principles
 
