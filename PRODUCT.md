@@ -29,7 +29,7 @@ Es una herramienta de apoyo a la valoración clínica que se organiza por partes
 - Se usa en directo, en la consulta, con el paciente delante mirando la misma pantalla.
 - La parte del cuerpo se elige a partir de lo que dice el paciente, de dos formas que llevan al mismo sitio: una silueta del cuerpo (de frente y de espaldas) y una lista con los nombres de las partes.
 - Tiene que funcionar igual de bien en móvil, tablet y ordenador; no hay un dispositivo principal.
-- Los vídeos se ven en la consulta, en el dispositivo del clínico. Que el paciente se los lleve a casa no forma parte del alcance confirmado.
+- Los vídeos se ven en la consulta, en el dispositivo del clínico. Desde el 2026-11-02 el clínico también puede juntar vídeos en una lista y enviársela al paciente por WhatsApp (enlaces, no archivos). El contacto se elige dentro de WhatsApp: la app no pide ni guarda números. La lista vive solo en la sesión del navegador.
 
 ## Capabilities and Constraints
 

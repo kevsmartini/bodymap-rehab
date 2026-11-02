@@ -299,7 +299,7 @@
 
       const inner = h("div", { class: "phase-inner" },
         list.length
-          ? h("ul", { class: "videos" }, ...list.map((ex, i) => h("li", {}, videoCard(ex, phase, list, i))))
+          ? h("ul", { class: "videos" }, ...list.map((ex, i) => videoItem(ex, phase, list, i, region)))
           : h("p", { class: "phase-empty", text: "No exercises in this phase for this area yet." })
       );
       const panel = h("div", { class: "phase-panel", id: panelId, role: "region", "aria-label": `Phase ${phase.id}: ${phase.name}` }, inner);
@@ -308,6 +308,30 @@
       return h("section", { class: "phase", "data-band": phase.band, "data-phase": phase.id, "data-open": isOpen },
         h("h2", {}, toggle), panel);
     }));
+  }
+
+  function videoItem(ex, phase, list, index, region) {
+    const li = h("li", { class: "vid" }, videoCard(ex, phase, list, index));
+    if (ex.url) {
+      const key = shareKey(region.id, state.side, ex);
+      const btn = h("button", {
+        type: "button",
+        class: "pick",
+        "data-key": key,
+        onclick: () => toggleShare({ region: region.id, side: state.side, phase: ex.phase, title: ex.title })
+      });
+      li.append(btn);
+      syncPick(li, btn, ex.title, share.keys.has(key));
+    }
+    return li;
+  }
+
+  function syncPick(li, btn, title, picked) {
+    li.toggleAttribute("data-picked", picked);
+    btn.setAttribute("aria-pressed", String(picked));
+    btn.setAttribute("aria-label", `${picked ? "Remove from" : "Add to"} the list to send: ${title}`);
+    btn.title = picked ? "In the list to send" : "Add to the list to send";
+    btn.replaceChildren(icon(picked ? "i-check" : "i-plus"));
   }
 
   function videoCard(ex, phase, list, index) {
@@ -371,6 +395,8 @@
     els.playerMeta.textContent = meta.join(" · ");
     if (DATA.sample) els.playerMeta.append(h("span", { class: "sample-mark", text: "Sample · placeholder" }));
 
+    syncPlayerPick();
+
     els.playerExt.hidden = !video;
     if (video) {
       els.playerExt.href = video.url;
@@ -397,6 +423,21 @@
 
     $("[data-step='-1']", els.dialog).disabled = player.index === 0;
     $("[data-step='1']", els.dialog).disabled = player.index === player.list.length - 1;
+  }
+
+  function playerItem() {
+    const ex = player.list[player.index];
+    return { region: state.region, side: state.side, phase: ex.phase, title: ex.title, url: ex.url };
+  }
+
+  function syncPlayerPick() {
+    const btn = $(".player-pick", els.dialog);
+    const item = playerItem();
+    btn.hidden = !item.url;
+    const picked = share.keys.has(shareKey(item.region, item.side, item));
+    btn.setAttribute("aria-pressed", String(picked));
+    btn.firstElementChild.replaceWith(icon(picked ? "i-check" : "i-plus"));
+    btn.lastElementChild.textContent = picked ? "In the list" : "Add to list";
   }
 
   function message(iconId, title, text) {
@@ -441,6 +482,197 @@
     if (e.target === anatDialog || e.target.closest("[data-anat-close]")) anatDialog.close();
   });
   $("[data-anatomy]").addEventListener("click", () => openAnatomy(state.region));
+
+  // ---------- Lista para enviar por WhatsApp ----------
+  // Se guarda en sessionStorage: sobrevive a una recarga pero no pasa al
+  // día siguiente ni a otra pestaña.
+
+  const SHARE_STORE = "bodymap-share";
+  const share = { items: [], keys: new Set() };
+  const shareEls = {
+    dock: $(".share-dock"),
+    count: $(".share-count"),
+    dockLabel: $(".share-dock-label"),
+    dialog: $(".share"),
+    meta: $(".share-meta"),
+    list: $(".share-list"),
+    text: $(".share-text"),
+    send: $(".share-send"),
+    clear: $("[data-share-clear]"),
+    status: $(".share-status"),
+    preview: $(".share-preview")
+  };
+
+  function shareKey(regionId, side, ex) {
+    return [regionId, side || "", ex.phase, ex.title].join("|");
+  }
+
+  function findExercise(item) {
+    const region = regionsById.get(item.region);
+    const ex = region && region.exercises.find((e) => e.phase === item.phase && e.title === item.title);
+    return ex && ex.url ? { region, ex } : null;
+  }
+
+  function loadShare() {
+    let saved = [];
+    try { saved = JSON.parse(sessionStorage.getItem(SHARE_STORE)) || []; } catch {}
+    // Si el catálogo cambió, se descartan los ejercicios que ya no existen.
+    setShare(Array.isArray(saved) ? saved.filter(findExercise) : [], false);
+  }
+
+  function setShare(items, persist = true) {
+    share.items = items;
+    share.keys = new Set(items.map((i) => shareKey(i.region, i.side, i)));
+    if (persist) {
+      try { sessionStorage.setItem(SHARE_STORE, JSON.stringify(items)); } catch {}
+    }
+    syncShare();
+  }
+
+  function toggleShare(item) {
+    const key = shareKey(item.region, item.side, item);
+    const had = share.keys.has(key);
+    setShare(had
+      ? share.items.filter((i) => shareKey(i.region, i.side, i) !== key)
+      : [...share.items, item]);
+    if (!had) {
+      shareEls.count.classList.remove("bump");
+      void shareEls.count.offsetWidth;
+      shareEls.count.classList.add("bump");
+    }
+  }
+
+  // Ordenado como el catálogo: zona, lado, fase y orden de los ejercicios.
+  function sortedShare() {
+    const regionOrder = DATA.regions.map((r) => r.id);
+    return share.items
+      .map((item) => ({ item, ...findExercise(item) }))
+      .filter((x) => x.ex)
+      .sort((a, b) =>
+        regionOrder.indexOf(a.item.region) - regionOrder.indexOf(b.item.region) ||
+        (a.item.side || "").localeCompare(b.item.side || "") ||
+        a.item.phase - b.item.phase ||
+        a.region.exercises.indexOf(a.ex) - b.region.exercises.indexOf(b.ex));
+  }
+
+  function shareGroups() {
+    const groups = [];
+    for (const entry of sortedShare()) {
+      const id = `${entry.item.region}|${entry.item.side || ""}`;
+      let g = groups[groups.length - 1];
+      if (!g || g.id !== id) groups.push(g = { id, region: entry.region, side: entry.item.side, phases: [] });
+      let p = g.phases[g.phases.length - 1];
+      if (!p || p.phase.id !== entry.item.phase) g.phases.push(p = { phase: phasesById.get(entry.item.phase), entries: [] });
+      p.entries.push(entry);
+    }
+    return groups;
+  }
+
+  function areaName(region, side) {
+    return region.paired && side ? `${side === "left" ? "Left" : "Right"} ${region.name.toLowerCase()}` : region.name;
+  }
+
+  function shareMessage(groups) {
+    const lines = ["*Your rehab exercises*", "Tap a link to watch how each one is done."];
+    for (const g of groups) {
+      lines.push("", `*${areaName(g.region, g.side)}*`);
+      for (const p of g.phases) {
+        lines.push(`_Phase ${p.phase.id} · ${p.phase.name}_`);
+        for (const { ex } of p.entries) {
+          lines.push(`• ${ex.title}${ex.duration ? ` (${clock(ex.duration)})` : ""}`, ex.url);
+        }
+      }
+    }
+    return lines.join("\n");
+  }
+
+  function syncShare() {
+    const n = share.items.length;
+    const all = sortedShare();
+    const time = all.reduce((sum, x) => sum + (x.ex.duration || 0), 0);
+
+    shareEls.dock.hidden = n === 0;
+    body.classList.toggle("has-share", n > 0);
+    shareEls.count.textContent = String(n);
+    shareEls.dockLabel.textContent = n === 1 ? "exercise to send" : "exercises to send";
+    shareEls.dock.setAttribute("aria-label", `Review and send ${plural(n, "exercise", "exercises")}`);
+
+    // Botones de los vídeos que hay en pantalla y del reproductor.
+    for (const btn of els.phases.querySelectorAll(".pick")) {
+      syncPick(btn.parentElement, btn, btn.parentElement.querySelector(".v-title").textContent, share.keys.has(btn.dataset.key));
+    }
+    if (els.dialog.open) syncPlayerPick();
+
+    if (shareEls.dialog.open) renderShare(all, time);
+  }
+
+  function renderShare(all = sortedShare(), time = all.reduce((sum, x) => sum + (x.ex.duration || 0), 0)) {
+    const groups = shareGroups();
+    const empty = !all.length;
+    shareEls.meta.textContent = empty
+      ? "No exercises in the list"
+      : `${plural(all.length, "exercise", "exercises")} · ${clock(time)} of video`;
+
+    shareEls.list.replaceChildren(empty
+      ? h("p", { class: "share-empty" }, "The list is empty. Add exercises with the ", icon("i-plus"), " button on each video.")
+      : h("div", {}, ...groups.map((g) => h("section", { class: "share-group" },
+          h("h3", {}, g.region.name, g.region.paired && g.side ? h("span", { text: ` · ${sideLabel(g.side).toLowerCase()}` }) : null),
+          ...g.phases.map((p) => h("div", { class: "share-phase", "data-band": p.phase.band },
+            h("p", { class: "share-tag" },
+              h("b", { class: "tag-n", text: `Phase ${p.phase.id}` }),
+              h("span", { class: "tag-name", text: p.phase.name }),
+              meter(p.phase.id)
+            ),
+            h("ul", {}, ...p.entries.map(({ item, ex }) => h("li", {},
+              h("span", { class: "share-title", text: ex.title }),
+              ex.duration ? h("span", { class: "share-dur", text: clock(ex.duration), "aria-label": spokenDuration(ex.duration) }) : null,
+              h("button", {
+                type: "button",
+                class: "icon-btn share-remove",
+                "aria-label": `Remove ${ex.title}`,
+                onclick: (e) => removeFromShare(item, e.currentTarget)
+              }, icon("i-close"))
+            )))
+          ))
+        ))));
+
+    shareEls.text.textContent = empty ? "" : shareMessage(groups);
+    shareEls.preview.hidden = empty;
+    shareEls.clear.disabled = empty;
+    // WhatsApp abre su selector de contactos con el mensaje ya escrito.
+    shareEls.send.href = `https://wa.me/?text=${encodeURIComponent(shareEls.text.textContent)}`;
+    shareEls.send.toggleAttribute("aria-disabled", empty);
+  }
+
+  function removeFromShare(item, btn) {
+    const buttons = [...shareEls.list.querySelectorAll(".share-remove")];
+    const at = buttons.indexOf(btn);
+    toggleShare(item);
+    const next = shareEls.list.querySelectorAll(".share-remove");
+    (next[Math.min(at, next.length - 1)] || $("[data-share-close]", shareEls.dialog)).focus();
+  }
+
+  function openShare() {
+    shareEls.status.textContent = "";
+    renderShare();
+    shareEls.dialog.showModal();
+  }
+
+  shareEls.dock.addEventListener("click", openShare);
+  shareEls.dialog.addEventListener("click", (e) => {
+    if (e.target === shareEls.dialog || e.target.closest("[data-share-close]")) shareEls.dialog.close();
+  });
+
+  shareEls.send.addEventListener("click", (e) => {
+    if (!share.items.length) return e.preventDefault();
+    shareEls.status.textContent = "WhatsApp opened in a new window. Clear the list when you’re done with this patient.";
+  });
+
+  shareEls.clear.addEventListener("click", () => {
+    setShare([]);
+    shareEls.status.textContent = "List cleared.";
+    $("[data-share-close]", shareEls.dialog).focus();
+  });
 
   // ---------- Navegación ----------
 
@@ -502,6 +734,10 @@
     if (e.key === "ArrowLeft") step(-1);
   });
   els.dialog.addEventListener("close", () => els.stage.replaceChildren());
+  $(".player-pick", els.dialog).addEventListener("click", () => {
+    const { url, ...item } = playerItem();
+    toggleShare(item);
+  });
 
   function syncOnline() {
     body.classList.toggle("is-offline", !navigator.onLine);
@@ -514,6 +750,7 @@
   // ---------- Arranque ----------
 
   $(".sample-note").hidden = !DATA.sample;
+  loadShare();
   renderRegionList();
   renderLegend();
   syncOnline();

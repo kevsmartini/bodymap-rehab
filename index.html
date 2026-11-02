@@ -24,6 +24,9 @@
     <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8M17 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-anatomy" viewBox="0 0 24 24"><path d="M12 3 4.5 7.2v9.6L12 21l7.5-4.2V7.2z M4.5 7.2 12 11.4l7.5-4.2M12 11.4V21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
     <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 4 8 4-8 4-8-4z M4 12l8 4 8-4M4 16l8 4 8-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4.5 19.5 5.6 16A8 8 0 1 1 8.3 18.6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
     <symbol id="i-offline" viewBox="0 0 24 24"><path d="M3 3l18 18M8.5 16.5a5 5 0 0 1 7 0M5 13a10 10 0 0 1 5-2.7M14.5 10.4A10 10 0 0 1 19 13M2 9.5a15 15 0 0 1 4.3-2.7M10.7 6.1A15 15 0 0 1 22 9.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="20" r="1.2" fill="currentColor"/></symbol>
   </svg>
 
@@ -94,6 +97,12 @@
     </main>
   </div>
 
+  <button type="button" class="share-dock" data-share-open hidden>
+    <b class="share-count">0</b>
+    <span class="share-dock-label"></span>
+    <span class="share-dock-go">Review<svg class="icon"><use href="#i-next"/></svg></span>
+  </button>
+
   <div class="update-toast" role="status" hidden>
     <span>New version available</span>
     <button type="button" class="btn btn-light" data-update-reload>Reload</button>
@@ -112,11 +121,36 @@
         <p class="player-meta"></p>
       </div>
       <div class="player-nav">
+        <button type="button" class="btn btn-ghost player-pick" aria-pressed="false"><svg class="icon"><use href="#i-plus"/></svg><span>Add to list</span></button>
         <a class="btn btn-ghost player-ext" target="_blank" rel="noopener" hidden><svg class="icon"><use href="#i-external"/></svg>Open on platform</a>
         <button type="button" class="btn btn-ghost" data-step="-1"><svg class="icon"><use href="#i-back"/></svg>Previous</button>
         <button type="button" class="btn btn-light" data-step="1">Next<svg class="icon"><use href="#i-next"/></svg></button>
       </div>
     </div>
+  </dialog>
+
+  <dialog class="share" aria-labelledby="share-title">
+    <header class="share-head">
+      <div>
+        <h2 id="share-title">Send to patient</h2>
+        <p class="share-meta"></p>
+      </div>
+      <button type="button" class="icon-btn" data-share-close aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button>
+    </header>
+    <div class="share-body">
+      <div class="share-list"></div>
+      <details class="share-preview">
+        <summary><svg class="icon chev"><use href="#i-chevron"/></svg>Preview message</summary>
+        <pre class="share-text"></pre>
+      </details>
+    </div>
+    <footer class="share-foot">
+      <div class="share-actions">
+        <a class="btn btn-light share-send" target="_blank" rel="noopener"><svg class="icon"><use href="#i-chat"/></svg>Send on WhatsApp</a>
+        <button type="button" class="btn btn-ghost share-clear" data-share-clear>Clear list</button>
+      </div>
+      <p class="share-status" role="status"></p>
+    </footer>
   </dialog>
 
   <dialog class="anatomy" aria-labelledby="anat-title">
