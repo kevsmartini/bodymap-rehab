@@ -224,6 +224,8 @@ class AnatomyViewer {
     this.layerAnim = null;
     this.camAnim = null;
     this.loadToken = 0;
+    this.insets = { top: 0, bottom: 0 };
+    this.center = new THREE.Vector3();
     this.raycaster = new THREE.Raycaster();
     this.pointer = new THREE.Vector2();
 
@@ -357,22 +359,19 @@ class AnatomyViewer {
   }
 
   frame() {
-    // focusSize is the box the region is about; bones running out of it
-    // (femur, humerus…) are allowed to leave the frame. Limb boxes are tight
-    // around the joint, so they get extra room to show what it connects.
-    const room = this.paired ? 1.4 : 1;
-    const [sx, sy, sz] = (this.meta.focusSize || [0.2, 0.2, 0.2]).map((v) => v * room);
-    this.radius = Math.hypot(sx, sy, sz) / 2;
-    const tanV = Math.tan(THREE.MathUtils.degToRad(this.camera.fov) / 2);
-    const across = Math.max(sx, sz);
-    const fitV = (sy / 2) / tanV;
-    const fitH = (across / 2) / (tanV * this.camera.aspect);
-    this.dist = Math.max(fitV, fitH) * 1.08 + across / 2;
-    this.panLimit = this.radius * 0.75;
-    this.controls.target.set(0, 0, 0);
-    this.controls.minDistance = this.radius * 0.4;
-    this.controls.maxDistance = this.dist * 3;
-    this.camera.near = this.radius / 50;
+    // Frame the whole model, centred on its real bounding box (the file's
+    // origin sits on the joint, which can be far from the middle of the
+    // meshes), inside the part of the stage the hint and controls leave free.
+    this.model.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(this.model);
+    this.center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3());
+    this.size = size;
+    this.radius = size.length() / 2;
+    this.fit();
+    this.panLimit = size.y * 0.5;
+    this.controls.target.copy(this.center);
+    this.camera.near = this.radius / 60;
     this.camera.far = this.dist * 12;
     this.camera.updateProjectionMatrix();
     const r = this.radius;
@@ -380,6 +379,34 @@ class AnatomyViewer {
     this.rim.position.set(-r * 2.8, r * 2.2, -this.dist * 2);
     this.fill.position.set(-r * 3.2, r * 0.6, r * 2.6);
   }
+
+  // Distance that fits the model's height into the free band of the stage
+  // and its widest horizontal extent (it turns) into the width.
+  fit() {
+    if (!this.size) return;
+    const h = this.stage.clientHeight || 1;
+    const free = Math.max(0.35, (h - this.insets.top - this.insets.bottom) / h);
+    const tanV = Math.tan(THREE.MathUtils.degToRad(this.camera.fov) / 2);
+    const across = Math.max(this.size.x, this.size.z);
+    const fitV = (this.size.y / 2) / (tanV * free);
+    const fitH = (across / 2) / (tanV * this.camera.aspect);
+    this.dist = Math.max(fitV, fitH) * 1.06 + across / 2;
+    this.controls.minDistance = this.radius * 0.25;
+    this.controls.maxDistance = this.dist * 2.5;
+  }
+
+  // Space taken by the hint chip (top) and the floating controls (bottom).
+  measureInsets() {
+    const stage = this.stage.getBoundingClientRect();
+    const hint = this.stage.querySelector(".anat-hint")?.getBoundingClientRect();
+    const tools = this.stage.querySelector(".anat-tools")?.getBoundingClientRect();
+    const gap = 12;
+    this.insets = {
+      top: hint && hint.height ? hint.bottom - stage.top + gap : 0,
+      bottom: tools && tools.height ? stage.bottom - tools.top + gap : 0
+    };
+  }
+
 
   renderList(meta) {
     const frag = document.createDocumentFragment();
@@ -515,6 +542,11 @@ class AnatomyViewer {
     if (!w || !h) return;
     this.renderer.setSize(w, h, false);
     this.camera.aspect = w / h;
+    this.measureInsets();
+    // Shift the picture so the model's centre lands in the middle of the
+    // free band, not the middle of the whole stage.
+    const shift = Math.round((this.insets.bottom - this.insets.top) / 2);
+    this.camera.setViewOffset(w, h, 0, shift, w, h);
     this.camera.updateProjectionMatrix();
   }
 
@@ -543,8 +575,9 @@ class AnatomyViewer {
 
     // Panning is limited to moving up and down.
     const target = this.controls.target;
-    const drift = new THREE.Vector3(target.x, 0, target.z);
-    const over = target.y - THREE.MathUtils.clamp(target.y, -this.panLimit, this.panLimit);
+    const c = this.center;
+    const drift = new THREE.Vector3(target.x - c.x, 0, target.z - c.z);
+    const over = target.y - THREE.MathUtils.clamp(target.y, c.y - this.panLimit, c.y + this.panLimit);
     if (drift.lengthSq() > 1e-8 || over) {
       drift.y = over;
       target.sub(drift);
