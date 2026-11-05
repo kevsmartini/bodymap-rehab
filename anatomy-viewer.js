@@ -1,176 +1,167 @@
 // 3D anatomy viewer. One instance is created on first use and reused for
-// every area; switching areas only rebuilds the model inside the scene.
+// every area; switching areas only swaps the model inside the scene.
+//
+// Models live in ./anatomy/<model>.glb with a matching <model>.json that lists
+// the structures (id, label, layer, mesh names, description, function).
+// They come from Z-Anatomy (CC BY-SA 4.0), based on BodyParts3D © DBCLS
+// (CC BY-SA 2.1 Japan); the credit is shown in the viewer's panel.
+//
+// Model frame: metres, +y up, +z anterior, +x towards the patient's LEFT,
+// centred on the joint. Limbs are modelled on the patient's left; the right
+// side is the same model mirrored (scale.x = -1). Spine models are midline.
 import * as THREE from "three";
-import { OrbitControls } from "./vendor/OrbitControls.js";
-import { REGIONS, COLORS } from "./anatomy-data.js";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { MeshoptDecoder } from "three/addons/libs/meshopt_decoder.module.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+
+const MODELS_PATH = "./anatomy/";
+
+// App area id (data.js) → model file.
+const MODEL_FOR = {
+  neck: "neck",
+  thoracic: "upper_back",
+  lumbar: "lower_back",
+  shoulder: "shoulder",
+  elbow: "elbow",
+  wrist: "wrist_hand",
+  hip: "hip",
+  knee: "knee",
+  ankle: "ankle_foot"
+};
+
+const LAYERS = [
+  ["superficial", "Superficial muscles"],
+  ["deep", "Deep muscles"],
+  ["ligament", "Ligaments & cartilage"],
+  ["bone", "Bones"]
+];
+const LAYER_DEPTH = { superficial: 0, deep: 1, ligament: 2, bone: 3 };
+const KIND_LABEL = {
+  superficial: "Muscle · superficial",
+  deep: "Muscle · deep",
+  ligament: "Ligament or cartilage",
+  bone: "Bone"
+};
+
+const STAGE_GREY = 0x8b8b88;
+const PEACH = new THREE.Color(0xf3d2af);
+const BLACK = new THREE.Color(0x000000);
 
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-const KIND_LABEL = { muscle: "Muscle", bone: "Bone", cartilage: "Cartilage" };
 
 let instance = null;
 
+export function hasAnatomy(regionId) {
+  return regionId in MODEL_FOR;
+}
+
 export function showAnatomy(dialog, regionId, side) {
   if (!instance) instance = new AnatomyViewer(dialog);
-  instance.show(regionId, side);
+  return instance.show(regionId, side);
 }
 
-// ---------- Geometry ----------
+// ---------- Materials ----------
 
-const smoothstep = (a, b, x) => {
-  const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
-  return t * t * (3 - 2 * t);
-};
+// Muscle-fibre micro-relief: a procedural bump that runs along each part's
+// main axis, faded out when the part is small on screen so it never shimmers.
+const FIBER_GLSL = /* glsl */`
+uniform vec3 uFibAxis; uniform float uFibAmp; uniform float uFibFreq; varying vec3 vFibPos;
+float fhash(vec3 p){ p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
+float fnoise(vec3 x){ vec3 i = floor(x); vec3 f = fract(x); f = f * f * (3.0 - 2.0 * f);
+  return mix(mix(mix(fhash(i), fhash(i + vec3(1,0,0)), f.x), mix(fhash(i + vec3(0,1,0)), fhash(i + vec3(1,1,0)), f.x), f.y),
+             mix(mix(fhash(i + vec3(0,0,1)), fhash(i + vec3(1,0,1)), f.x), mix(fhash(i + vec3(0,1,1)), fhash(i + vec3(1,1,1)), f.x), f.y), f.z); }
+float fiberHeight(vec3 p){ vec3 a = uFibAxis; vec3 b = normalize(cross(a, abs(a.y) < 0.9 ? vec3(0.0,1.0,0.0) : vec3(1.0,0.0,0.0))); vec3 c = cross(a, b);
+  vec3 q = vec3(dot(p, b) * uFibFreq, dot(p, c) * uFibFreq, dot(p, a) * uFibFreq * 0.06);
+  return fnoise(q) * 0.65 + fnoise(q * vec3(2.7, 2.7, 1.9) + 7.1) * 0.35; }`;
 
-// Seeded random so the fibre texture looks the same on every load.
-function seeded(seed) {
-  let s = seed >>> 0;
-  return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+function addFibers(material, axis, amp, freq) {
+  const uniforms = { uFibAxis: { value: axis }, uFibAmp: { value: amp }, uFibFreq: { value: freq } };
+  material.customProgramCacheKey = () => "fibers";
+  material.onBeforeCompile = (sh) => {
+    Object.assign(sh.uniforms, uniforms);
+    sh.vertexShader = sh.vertexShader
+      .replace("#include <common>", "#include <common>\nvarying vec3 vFibPos;")
+      .replace("#include <project_vertex>", "#include <project_vertex>\nvFibPos = (modelMatrix * vec4(transformed, 1.0)).xyz;");
+    sh.fragmentShader = sh.fragmentShader
+      .replace("#include <common>", "#include <common>\n" + FIBER_GLSL)
+      .replace("#include <normal_fragment_maps>", `#include <normal_fragment_maps>
+      { float fp = length(fwidth(vFibPos)) * uFibFreq; float fade = 1.0 - smoothstep(0.35, 1.1, fp);
+        if (fade > 0.0) { vec3 dpdx = dFdx(-vViewPosition), dpdy = dFdy(-vViewPosition);
+          float h = fiberHeight(vFibPos) * uFibAmp * fade; vec3 r1 = cross(dpdy, normal), r2 = cross(normal, dpdx);
+          float det = dot(dpdx, r1) * faceDirection; vec3 grad = sign(det) * (dFdx(h) * r1 + dFdy(h) * r2);
+          normal = normalize(abs(det) * normal - grad); } }`);
+  };
 }
 
-function fiberTexture(renderer) {
-  const size = 256;
-  const canvas = document.createElement("canvas");
-  canvas.width = canvas.height = size;
-  const g = canvas.getContext("2d");
-  const rand = seeded(7);
-  g.fillStyle = "#ffffff";
-  g.fillRect(0, 0, size, size);
-  // Fine vertical lines: they run along the muscle's length.
-  for (let x = 0; x < size; x += 1.6 + rand() * 1.8) {
-    const dark = rand() > 0.25;
-    g.strokeStyle = dark
-      ? `rgba(70, 12, 10, ${0.1 + rand() * 0.2})`
-      : `rgba(255, 245, 235, ${0.25 + rand() * 0.25})`;
-    g.lineWidth = 0.5 + rand() * 0.9;
-    const drift = (rand() - 0.5) * 3;
-    g.beginPath();
-    g.moveTo(x, 0);
-    g.bezierCurveTo(x + drift, size * 0.33, x - drift, size * 0.66, x, size);
-    g.stroke();
-  }
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-  return tex;
+// Stable 0–1 value per structure id, so neighbouring muscles differ a little.
+function hash01(s) {
+  let h = 2166136261;
+  for (const ch of s) h = Math.imul(h ^ ch.charCodeAt(0), 16777619);
+  return ((h >>> 0) % 10000) / 10000;
 }
 
-// A tube along a CatmullRom curve with an elliptical, spindle-shaped section:
-// thin at both ends, thickest at the belly, coloured muscle-red in the middle
-// and fading to tendon-white at the ends.
-function muscleGeometry(def) {
-  const curve = new THREE.CatmullRomCurve3(def.path.map((p) => new THREE.Vector3(...p)), false, "centripetal");
-  const length = curve.getLength();
-  const facing = new THREE.Vector3(...(def.facing || [0, 0, 1])).normalize();
-  const [ts, te] = def.tendon || [0.12, 0.12];
-  const w = def.w || 1.2;
-  const d = def.d || 0.8;
-  const muscleColor = new THREE.Color(def.color || COLORS.muscle);
-  const tendonColor = new THREE.Color(COLORS.tendon);
-
-  const segs = 80;
-  const radial = 24;
-  const pos = [];
-  const nor = [];
-  const col = [];
-  const uv = [];
-  const idx = [];
-  const P = new THREE.Vector3();
-  const T = new THREE.Vector3();
-  const depthAxis = new THREE.Vector3();
-  const widthAxis = new THREE.Vector3();
-  const tmp = new THREE.Color();
-  const circumference = Math.PI * def.r * (w + d);
-
-  for (let i = 0; i <= segs; i++) {
-    const t = i / segs;
-    curve.getPointAt(t, P);
-    curve.getTangentAt(t, T);
-    depthAxis.copy(facing).addScaledVector(T, -facing.dot(T));
-    if (depthAxis.lengthSq() < 1e-4) depthAxis.set(T.y, -T.x, 0);
-    depthAxis.normalize();
-    widthAxis.crossVectors(T, depthAxis).normalize();
-
-    // 1 = muscle belly, 0 = tendon
-    const m = smoothstep(ts * 0.45, ts * 1.35, t) * smoothstep(te * 0.45, te * 1.35, 1 - t);
-    const spindle = 0.16 + 0.84 * Math.pow(Math.sin(Math.PI * t), 0.75);
-    const tip = Math.sqrt(Math.min(1, Math.min(t, 1 - t) / 0.025));
-    const radius = def.r * spindle * (0.42 + 0.58 * m) * tip;
-    const rw = Math.max(radius * w, 1e-4);
-    const rd = Math.max(radius * d, 1e-4);
-    tmp.copy(tendonColor).lerp(muscleColor, m);
-
-    for (let j = 0; j <= radial; j++) {
-      const a = (j / radial) * Math.PI * 2;
-      const c = Math.cos(a);
-      const s = Math.sin(a);
-      pos.push(
-        P.x + widthAxis.x * c * rw + depthAxis.x * s * rd,
-        P.y + widthAxis.y * c * rw + depthAxis.y * s * rd,
-        P.z + widthAxis.z * c * rw + depthAxis.z * s * rd
-      );
-      const nx = widthAxis.x * c * rd + depthAxis.x * s * rw;
-      const ny = widthAxis.y * c * rd + depthAxis.y * s * rw;
-      const nz = widthAxis.z * c * rd + depthAxis.z * s * rw;
-      const nl = Math.hypot(nx, ny, nz) || 1;
-      nor.push(nx / nl, ny / nl, nz / nl);
-      col.push(tmp.r, tmp.g, tmp.b);
-      uv.push((j / radial) * (circumference / 4), t * (length / 6));
-    }
+function makeMaterial(layer, id, axis) {
+  if (layer === "superficial" || layer === "deep") {
+    const r = hash01(id);
+    const r2 = hash01(id + "x");
+    const m = new THREE.MeshPhysicalMaterial({
+      color: new THREE.Color().setHSL(0.992 + (r - 0.5) * 0.025, 0.66 + r2 * 0.1, (layer === "deep" ? 0.19 : 0.215) + (r - 0.5) * 0.04),
+      roughness: 0.46, clearcoat: 0.32, clearcoatRoughness: 0.38,
+      sheen: 0.3, sheenRoughness: 0.5, sheenColor: new THREE.Color(0xff7a6a)
+    });
+    addFibers(m, axis, 0.00042, 1100);
+    return m;
   }
-  for (let i = 0; i < segs; i++) {
-    for (let j = 0; j < radial; j++) {
-      const a = i * (radial + 1) + j;
-      const b = a + radial + 1;
-      idx.push(a, b, a + 1, b, b + 1, a + 1);
-    }
+  if (layer === "ligament") {
+    const m = new THREE.MeshPhysicalMaterial({
+      color: 0xe6e0d3, roughness: 0.3, clearcoat: 0.75, clearcoatRoughness: 0.2,
+      sheen: 0.4, sheenColor: new THREE.Color(0xeef4ff)
+    });
+    addFibers(m, axis, 0.0002, 1800);
+    return m;
   }
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
-  geo.setAttribute("normal", new THREE.Float32BufferAttribute(nor, 3));
-  geo.setAttribute("color", new THREE.Float32BufferAttribute(col, 3));
-  geo.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2));
-  geo.setIndex(idx);
-  geo.computeBoundingSphere();
-  return geo;
+  return new THREE.MeshPhysicalMaterial({ color: 0xd8cbb0, roughness: 0.6, clearcoat: 0.12, clearcoatRoughness: 0.6 });
 }
 
-const unitSphere = new THREE.SphereGeometry(1, 36, 24);
-
-function partMeshes(part, material) {
-  const meshes = [];
-  if (part.tube) {
-    const pts = part.tube.map((p) => new THREE.Vector3(...p));
-    const curve = new THREE.CatmullRomCurve3(pts, false, "centripetal");
-    meshes.push(new THREE.Mesh(new THREE.TubeGeometry(curve, Math.max(12, pts.length * 14), part.r, 16, false), material));
-    // Rounded ends
-    for (const end of [pts[0], pts[pts.length - 1]]) {
-      const cap = new THREE.Mesh(unitSphere, material);
-      cap.position.copy(end);
-      cap.scale.setScalar(part.r);
-      meshes.push(cap);
-    }
-  } else if (part.ring) {
-    const [cx, cy, cz] = part.ring;
-    const pts = [];
-    for (let i = 0; i < 24; i++) {
-      const a = (i / 24) * Math.PI * 2;
-      const u = Math.cos(a) * part.radius;
-      const v = Math.sin(a) * part.radius;
-      if (part.axis === "x") pts.push(new THREE.Vector3(cx, cy + u, cz + v));
-      else if (part.axis === "z") pts.push(new THREE.Vector3(cx + u, cy + v, cz));
-      else pts.push(new THREE.Vector3(cx + u, cy, cz + v));
-    }
-    const curve = new THREE.CatmullRomCurve3(pts, true, "centripetal");
-    meshes.push(new THREE.Mesh(new THREE.TubeGeometry(curve, 64, part.r, 12, true), material));
-  } else if (part.sphere) {
-    const mesh = new THREE.Mesh(unitSphere, material);
-    mesh.position.set(...part.sphere);
-    mesh.scale.set(...(part.scale || [1, 1, 1]));
-    if (part.rot) mesh.rotation.set(...part.rot.map(THREE.MathUtils.degToRad));
-    meshes.push(mesh);
+// Main axis of a part (power iteration on the covariance of a vertex sample):
+// the fibre relief runs along it.
+function principalAxis(geo) {
+  const pos = geo.attributes.position;
+  const step = Math.max(1, Math.floor(pos.count / 1500));
+  const v = new THREE.Vector3();
+  const c = new THREE.Vector3();
+  const pts = [];
+  for (let i = 0; i < pos.count; i += step) { v.fromBufferAttribute(pos, i); pts.push(v.clone()); c.add(v); }
+  c.divideScalar(pts.length);
+  let xx = 0, xy = 0, xz = 0, yy = 0, yz = 0, zz = 0;
+  for (const p of pts) {
+    const x = p.x - c.x, y = p.y - c.y, z = p.z - c.z;
+    xx += x * x; xy += x * y; xz += x * z; yy += y * y; yz += y * z; zz += z * z;
   }
-  return meshes;
+  const a = new THREE.Vector3(0.3, 1, 0.2).normalize();
+  for (let k = 0; k < 24; k++) {
+    a.set(xx * a.x + xy * a.y + xz * a.z, xy * a.x + yy * a.y + yz * a.z, xz * a.x + yz * a.y + zz * a.z).normalize();
+  }
+  return { axis: a, center: c };
+}
+
+// Bakes the node transform (gltfpack quantisation) into a plain float
+// geometry so picking, framing and separation work in model metres.
+function bakeGeometry(mesh) {
+  const src = mesh.geometry;
+  const p = src.attributes.position;
+  const P = new Float32Array(p.count * 3);
+  for (let i = 0; i < p.count; i++) {
+    P[i * 3] = p.getX(i); P[i * 3 + 1] = p.getY(i); P[i * 3 + 2] = p.getZ(i);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.BufferAttribute(P, 3));
+  if (src.index) g.setIndex(src.index);
+  g.applyMatrix4(mesh.matrixWorld);
+  g.computeVertexNormals();
+  g.computeBoundingSphere();
+  return g;
 }
 
 // ---------- Viewer ----------
@@ -191,19 +182,25 @@ class AnatomyViewer {
     this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.05;
+    this.renderer.toneMappingExposure = 0.95;
 
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(COLORS.background);
-    this.camera = new THREE.PerspectiveCamera(35, 1, 0.1, 2000);
+    this.scene.background = new THREE.Color(STAGE_GREY);
+    const pmrem = new THREE.PMREMGenerator(this.renderer);
+    this.scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+    this.scene.environmentIntensity = 0.42;
+    pmrem.dispose();
+
+    this.camera = new THREE.PerspectiveCamera(32, 1, 0.005, 20);
     this.scene.add(this.camera);
 
-    // Hemisphere fill, warm key light and a cool rim light behind the model.
-    // Key and rim ride with the camera so the model is always lit the same way.
-    this.scene.add(new THREE.HemisphereLight(0xf3efe8, 0x4f4740, 1.15));
-    this.key = new THREE.DirectionalLight(0xffd9b0, 2.6);
-    this.rim = new THREE.DirectionalLight(0xd6e4ff, 2.2);
-    this.camera.add(this.key, this.rim);
+    // Warm key, cool rim behind the model and a soft fill. They ride with
+    // the camera so the model is lit the same way from every angle.
+    this.key = new THREE.DirectionalLight(0xfff0de, 2.3);
+    this.rim = new THREE.DirectionalLight(0xb9d2ff, 1.4);
+    this.fill = new THREE.DirectionalLight(0xffe6e0, 0.5);
+    this.camera.add(this.key, this.rim, this.fill);
+    this.scene.add(new THREE.HemisphereLight(0x8a9bb0, 0x2a1c18, 0.3));
 
     this.controls = new OrbitControls(this.camera, this.canvas);
     this.controls.enableDamping = !reducedMotion.matches;
@@ -216,16 +213,17 @@ class AnatomyViewer {
       this.setViewPressed(null);
     });
 
-    this.fiberTex = fiberTexture(this.renderer);
+    this.loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
     this.root = new THREE.Group();
     this.scene.add(this.root);
+    this.parts = [];
     this.structures = new Map();
-    this.pickables = [];
     this.selected = null;
     this.layersOpen = false;
     this.layerT = 0;
     this.layerAnim = null;
     this.camAnim = null;
+    this.loadToken = 0;
     this.raycaster = new THREE.Raycaster();
     this.pointer = new THREE.Vector2();
 
@@ -264,118 +262,129 @@ class AnatomyViewer {
 
   // ---------- Model ----------
 
-  show(regionId, side) {
-    const region = REGIONS[regionId];
-    if (!region) return;
-    this.region = region;
-    this.side = side || "right";
-    this.paired = Boolean(side);
-    this.titleEl.textContent = `${region.title} anatomy`;
-    this.metaEl.textContent = (this.paired ? `Patient's ${this.side} · ` : "") + "Simplified teaching model";
-    this.canvas.setAttribute("aria-label", `3D model of the ${region.title.toLowerCase()}. Use the structure list to select parts.`);
+  async show(regionId, side) {
+    const model = MODEL_FOR[regionId];
+    if (!model) throw new Error(`No anatomy model for ${regionId}`);
+    const token = ++this.loadToken;
+    this.status.textContent = "Loading 3D model…";
+    this.status.hidden = false;
 
-    this.build(region);
-    this.renderList(region);
+    const [gltf, meta] = await Promise.all([
+      this.loader.loadAsync(`${MODELS_PATH}${model}.glb`),
+      fetch(`${MODELS_PATH}${model}.json`).then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+    ]);
+    // A newer request (another area) won while this one was downloading.
+    if (token !== this.loadToken || !this.dialog.open) return;
+
+    this.meta = meta;
+    this.paired = meta.side !== "midline";
+    this.side = this.paired ? (side === "right" ? "right" : "left") : "right";
+    this.titleEl.textContent = `${meta.label} anatomy`;
+    const count = `${meta.structures.length} structures`;
+    this.metaEl.textContent = this.paired ? `Patient's ${this.side} · ${count}` : count;
+    this.canvas.setAttribute("aria-label", `3D model of the ${meta.label.toLowerCase()}. Use the structure list to select parts.`);
+
+    this.build(gltf, meta);
+    this.renderList(meta);
     this.select(null);
     this.layersOpen = false;
     this.layerT = 0;
+    this.layerAnim = null;
     this.layersBtn.setAttribute("aria-pressed", "false");
     this.resize();
     this.frame();
-    this.setView(region.view || "front", true);
+    this.setView(meta.defaultView || "front", true);
     this.renderer.setAnimationLoop((time) => this.tick(time));
     this.status.hidden = true;
   }
 
-  build(region) {
+  build(gltf, meta) {
     this.disposeModel();
     const model = new THREE.Group();
-    // Paired areas are modelled on the right; mirror them for the left side.
-    if (this.paired && this.side === "left") model.scale.x = -1;
+    if (this.side === "right") model.scale.x = -1;
 
-    for (const def of region.structures) {
-      let material;
-      const meshes = [];
-      if (def.kind === "muscle") {
-        material = new THREE.MeshStandardMaterial({ vertexColors: true, map: this.fiberTex, roughness: 0.6, metalness: 0 });
-        meshes.push(new THREE.Mesh(muscleGeometry(def), material));
-      } else {
-        const isBone = def.kind === "bone";
-        material = new THREE.MeshStandardMaterial({
-          color: def.color || (isBone ? COLORS.bone : COLORS.cartilage),
-          roughness: isBone ? 0.78 : 0.32,
-          metalness: 0
-        });
-        for (const part of def.parts) meshes.push(...partMeshes(part, material));
-      }
-      const holder = new THREE.Group();
-      for (const mesh of meshes) {
-        mesh.userData.sid = def.id;
-        holder.add(mesh);
-        this.pickables.push(mesh);
-      }
-      model.add(holder);
-      const dir = new THREE.Vector3(...(def.facing || [0, 0, 1])).normalize();
-      this.structures.set(def.id, {
-        def, material, holder,
-        sep: def.layer === "superficial" ? dir.multiplyScalar(def.sep || Math.max(2.6, def.r * 2.2)) : null
-      });
+    const byMesh = new Map();
+    for (const s of meta.structures) {
+      for (const name of s.meshes) byMesh.set(name, s);
+      this.structures.set(s.id, { def: s, objects: [] });
     }
+    gltf.scene.updateMatrixWorld(true);
+    const meshes = [];
+    gltf.scene.traverse((n) => { if (n.isMesh) meshes.push(n); });
 
-    // Centre the model on the origin so orbiting turns around its middle.
-    const box = new THREE.Box3().setFromObject(model);
-    const center = box.getCenter(new THREE.Vector3());
-    model.position.sub(center);
+    for (const mesh of meshes) {
+      let node = mesh;
+      while (node && !byMesh.has(node.name)) node = node.parent;
+      if (!node) continue;
+      const def = byMesh.get(node.name);
+      const geometry = bakeGeometry(mesh);
+      const { axis, center } = principalAxis(geometry);
+      const material = makeMaterial(def.layer, def.id, axis);
+      const obj = new THREE.Mesh(geometry, material);
+      obj.userData.sid = def.id;
+      // Each part sits in its own holder so separation can move it.
+      const holder = new THREE.Group();
+      holder.add(obj);
+      model.add(holder);
+      const dir = center.lengthSq() < 1e-8 ? new THREE.Vector3(0, 0, 1) : center.clone().normalize();
+      this.parts.push({ obj, holder, dir, depth: LAYER_DEPTH[def.layer] ?? 3, base: material.color.clone() });
+      this.structures.get(def.id).objects.push(obj);
+    }
+    // Drop entries the file lists but the model doesn't carry.
+    for (const [id, s] of this.structures) if (!s.objects.length) this.structures.delete(id);
+
+    this.gltfScene = gltf.scene;
     this.root.add(model);
     this.model = model;
-    this.bounds = box.getBoundingSphere(new THREE.Sphere());
-    this.size = box.getSize(new THREE.Vector3());
   }
 
   disposeModel() {
-    if (!this.model) return;
-    this.model.traverse((obj) => {
-      if (obj.isMesh) {
-        if (obj.geometry !== unitSphere) obj.geometry.dispose();
-      }
-    });
-    for (const s of this.structures.values()) s.material.dispose();
-    this.root.remove(this.model);
+    for (const p of this.parts) {
+      p.obj.geometry.dispose();
+      p.obj.material.dispose();
+    }
+    if (this.gltfScene) {
+      this.gltfScene.traverse((n) => { if (n.isMesh) n.geometry.dispose(); });
+      this.gltfScene = null;
+    }
+    if (this.model) this.root.remove(this.model);
     this.model = null;
+    this.parts = [];
     this.structures.clear();
-    this.pickables = [];
   }
 
   frame() {
-    // Fit the model's height (and its widest horizontal extent, since it
-    // turns) into the view, leaving room for the toolbar.
-    const r = this.bounds.radius;
+    // focusSize is the box the region is about; bones running out of it
+    // (femur, humerus…) are allowed to leave the frame. Limb boxes are tight
+    // around the joint, so they get extra room to show what it connects.
+    const room = this.paired ? 1.4 : 1;
+    const [sx, sy, sz] = (this.meta.focusSize || [0.2, 0.2, 0.2]).map((v) => v * room);
+    this.radius = Math.hypot(sx, sy, sz) / 2;
     const tanV = Math.tan(THREE.MathUtils.degToRad(this.camera.fov) / 2);
-    const across = Math.max(this.size.x, this.size.z);
-    const fitV = (this.size.y / 2) / tanV;
+    const across = Math.max(sx, sz);
+    const fitV = (sy / 2) / tanV;
     const fitH = (across / 2) / (tanV * this.camera.aspect);
-    this.dist = Math.max(fitV, fitH) * 1.12 + across / 2;
-    this.panLimit = r * 0.75;
+    this.dist = Math.max(fitV, fitH) * 1.08 + across / 2;
+    this.panLimit = this.radius * 0.75;
     this.controls.target.set(0, 0, 0);
-    this.controls.minDistance = r * 0.5;
-    this.controls.maxDistance = this.dist * 2.4;
-    this.camera.near = r / 50;
-    this.camera.far = this.dist * 10;
+    this.controls.minDistance = this.radius * 0.4;
+    this.controls.maxDistance = this.dist * 3;
+    this.camera.near = this.radius / 50;
+    this.camera.far = this.dist * 12;
     this.camera.updateProjectionMatrix();
-    this.key.position.set(r * 1.2, r * 1.6, r * 0.6);
-    this.rim.position.set(-r * 0.8, r * 1.2, -this.dist * 2);
+    const r = this.radius;
+    this.key.position.set(r * 1.6, r * 4.4, r * 3.2);
+    this.rim.position.set(-r * 2.8, r * 2.2, -this.dist * 2);
+    this.fill.position.set(-r * 3.2, r * 0.6, r * 2.6);
   }
 
-  renderList(region) {
-    const groups = [
-      ["Superficial muscles", (s) => s.kind === "muscle" && s.layer === "superficial"],
-      ["Deep muscles", (s) => s.kind === "muscle" && s.layer !== "superficial"],
-      ["Bones", (s) => s.kind === "bone"],
-      ["Cartilage", (s) => s.kind === "cartilage"]
-    ];
+  renderList(meta) {
     const frag = document.createDocumentFragment();
-    for (const [label, test] of groups) {
-      const items = region.structures.filter(test);
+    for (const [layer, label] of LAYERS) {
+      const items = meta.structures.filter((s) => s.layer === layer && this.structures.has(s.id));
       if (!items.length) continue;
       const section = document.createElement("section");
       const h = document.createElement("h3");
@@ -386,12 +395,12 @@ class AnatomyViewer {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.dataset.sid = s.id;
-        btn.dataset.kind = s.kind;
+        btn.dataset.kind = layer;
         btn.setAttribute("aria-pressed", "false");
         const dot = document.createElement("span");
         dot.className = "swatch";
         dot.setAttribute("aria-hidden", "true");
-        btn.append(dot, document.createTextNode(s.name));
+        btn.append(dot, document.createTextNode(s.label));
         li.append(btn);
         ul.append(li);
       }
@@ -399,6 +408,7 @@ class AnatomyViewer {
       frag.append(section);
     }
     this.listEl.replaceChildren(frag);
+    this.listEl.scrollTop = 0;
   }
 
   // ---------- Selection ----------
@@ -407,17 +417,20 @@ class AnatomyViewer {
     const rect = this.canvas.getBoundingClientRect();
     this.pointer.set(((e.clientX - rect.left) / rect.width) * 2 - 1, -((e.clientY - rect.top) / rect.height) * 2 + 1);
     this.raycaster.setFromCamera(this.pointer, this.camera);
-    const hit = this.raycaster.intersectObjects(this.pickables, false)[0];
+    const hit = this.raycaster.intersectObjects(this.parts.map((p) => p.obj), false)[0];
     return hit ? hit.object.userData.sid : null;
   }
 
   select(sid) {
+    if (sid && !this.structures.has(sid)) sid = null;
     this.selected = sid;
-    const highlight = new THREE.Color(COLORS.highlight);
-    for (const [id, s] of this.structures) {
-      const on = id === sid;
-      s.material.emissive.copy(on ? highlight : new THREE.Color(0x000000));
-      s.material.emissiveIntensity = on ? 0.42 : 0;
+    for (const p of this.parts) {
+      const on = p.obj.userData.sid === sid;
+      const m = p.obj.material;
+      m.color.copy(p.base);
+      if (on) m.color.lerp(PEACH, 0.55);
+      m.emissive.copy(on ? PEACH : BLACK);
+      m.emissiveIntensity = on ? 0.42 : 0;
     }
     for (const btn of this.listEl.querySelectorAll("[data-sid]")) {
       btn.setAttribute("aria-pressed", String(btn.dataset.sid === sid));
@@ -426,18 +439,31 @@ class AnatomyViewer {
     const kindEl = this.infoEl.querySelector(".anat-kind");
     const nameEl = this.infoEl.querySelector(".anat-name");
     const descEl = this.infoEl.querySelector(".anat-desc");
+    const funcEl = this.infoEl.querySelector(".anat-func");
     const s = sid && this.structures.get(sid);
-    this.infoEl.dataset.kind = s ? s.def.kind : "";
     if (!s) {
+      delete this.infoEl.dataset.kind;
       kindEl.textContent = "";
       nameEl.textContent = "Tap a structure";
-      descEl.textContent = "Touch any muscle, bone or cartilage on the model, or choose one from the list, to see what it is and what it does.";
+      descEl.textContent = "Touch any muscle, ligament or bone on the model, or choose one from the list, to see what it is and what it does.";
+      funcEl.replaceChildren();
+      funcEl.hidden = true;
       return;
     }
     const d = s.def;
-    kindEl.textContent = d.kind === "muscle" ? `${KIND_LABEL.muscle} · ${d.layer === "superficial" ? "superficial" : "deep"}` : KIND_LABEL[d.kind];
-    nameEl.textContent = d.name;
-    descEl.textContent = d.desc;
+    this.infoEl.dataset.kind = d.layer;
+    kindEl.textContent = KIND_LABEL[d.layer] || "";
+    nameEl.textContent = d.label;
+    descEl.textContent = d.description || "";
+    if (d.function) {
+      const b = document.createElement("strong");
+      b.textContent = "Function. ";
+      funcEl.replaceChildren(b, document.createTextNode(d.function));
+      funcEl.hidden = false;
+    } else {
+      funcEl.replaceChildren();
+      funcEl.hidden = true;
+    }
     const btn = this.listEl.querySelector(`[data-sid="${CSS.escape(sid)}"]`);
     if (btn) btn.scrollIntoView({ block: "nearest" });
   }
@@ -450,6 +476,7 @@ class AnatomyViewer {
 
   setView(view, instant = false) {
     this.setViewPressed(view);
+    // Side looks at the lateral face: +x for the patient's left, −x for the right.
     const lateral = this.side === "left" ? Math.PI / 2 : -Math.PI / 2;
     const azimuth = view === "back" ? Math.PI : view === "side" ? lateral : 0;
     const target = this.controls.target;
@@ -457,9 +484,9 @@ class AnatomyViewer {
     const from = new THREE.Spherical().setFromVector3(offset);
     if (instant || !from.radius) {
       from.radius = this.dist;
-      from.phi = Math.PI / 2 - 0.1;
+      from.phi = Math.PI / 2 - 0.08;
     }
-    const to = new THREE.Spherical(instant ? this.dist : from.radius, Math.PI / 2 - 0.1, azimuth);
+    const to = new THREE.Spherical(instant ? this.dist : from.radius, Math.PI / 2 - 0.08, azimuth);
     let dTheta = to.theta - from.theta;
     dTheta = Math.atan2(Math.sin(dTheta), Math.cos(dTheta));
     if (instant || reducedMotion.matches) {
@@ -506,9 +533,9 @@ class AnatomyViewer {
       const a = this.layerAnim;
       const t = a.dur ? Math.min(1, (now - a.start) / a.dur) : 1;
       this.layerT = a.from + (a.to - a.from) * ease(t);
-      for (const s of this.structures.values()) {
-        if (s.sep) s.holder.position.copy(s.sep).multiplyScalar(this.layerT);
-      }
+      // Parts move out from the centre; superficial ones furthest, bones stay.
+      const reach = this.layerT * this.radius * 0.13;
+      for (const p of this.parts) p.holder.position.copy(p.dir).multiplyScalar(reach * (3 - p.depth));
       if (t >= 1) this.layerAnim = null;
     }
 

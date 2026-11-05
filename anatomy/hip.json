@@ -1,0 +1,204 @@
+{
+  "region": "hip",
+  "label": "Hip",
+  "side": "left",
+  "units": "meters",
+  "axes": "+Y up, +Z anterior (front), +X patient left",
+  "defaultView": "front",
+  "originalCenter": [
+    0.0899,
+    0.8477,
+    -0.0062
+  ],
+  "focusSize": [
+    0.19,
+    0.2375,
+    0.19
+  ],
+  "structures": [
+    {
+      "id": "gluteus_maximus",
+      "label": "Gluteus maximus",
+      "layer": "superficial",
+      "meshes": [
+        "gluteus_maximus__0"
+      ],
+      "description": "Largest muscle of the body, forming the buttock.",
+      "function": "Extends and externally rotates the hip; key in squats, sprinting and climbing."
+    },
+    {
+      "id": "gluteus_medius",
+      "label": "Gluteus medius",
+      "layer": "superficial",
+      "meshes": [
+        "gluteus_medius__0"
+      ],
+      "description": "Fan-shaped muscle on the side of the pelvis.",
+      "function": "Abducts the hip and keeps the pelvis level when standing on one leg."
+    },
+    {
+      "id": "tfl",
+      "label": "Tensor fasciae latae",
+      "layer": "superficial",
+      "meshes": [
+        "tfl__0"
+      ],
+      "description": "Small muscle at the front of the hip feeding into the iliotibial band.",
+      "function": "Flexes, abducts and internally rotates the hip."
+    },
+    {
+      "id": "it_band",
+      "label": "Iliotibial band",
+      "layer": "superficial",
+      "meshes": [
+        "it_band__0"
+      ],
+      "description": "Thick strip of fascia down the outer thigh to the tibia.",
+      "function": "Stabilises the outside of the hip and knee."
+    },
+    {
+      "id": "sartorius",
+      "label": "Sartorius",
+      "layer": "superficial",
+      "meshes": [
+        "sartorius__0"
+      ],
+      "description": "Long strap muscle crossing the thigh diagonally.",
+      "function": "Flexes, abducts and externally rotates the hip (cross-legged position)."
+    },
+    {
+      "id": "rectus_femoris",
+      "label": "Rectus femoris",
+      "layer": "superficial",
+      "meshes": [
+        "rectus_femoris__0"
+      ],
+      "description": "Quadriceps muscle that starts on the pelvis.",
+      "function": "Flexes the hip and straightens the knee."
+    },
+    {
+      "id": "adductor_longus",
+      "label": "Adductor longus",
+      "layer": "superficial",
+      "meshes": [
+        "adductor_longus__0"
+      ],
+      "description": "Inner-thigh muscle from the pubis to the femur.",
+      "function": "Pulls the leg towards the midline; common site of groin strains."
+    },
+    {
+      "id": "gluteus_minimus",
+      "label": "Gluteus minimus",
+      "layer": "deep",
+      "meshes": [
+        "gluteus_minimus__0"
+      ],
+      "description": "Smallest gluteal muscle, beneath the medius.",
+      "function": "Abducts and internally rotates the hip; stabilises the pelvis."
+    },
+    {
+      "id": "piriformis",
+      "label": "Piriformis",
+      "layer": "deep",
+      "meshes": [
+        "piriformis__0"
+      ],
+      "description": "Pear-shaped muscle from the sacrum to the greater trochanter; the sciatic nerve runs beneath it.",
+      "function": "Externally rotates the hip."
+    },
+    {
+      "id": "deep_rotators",
+      "label": "Obturator internus & gemelli",
+      "layer": "deep",
+      "meshes": [
+        "deep_rotators__0",
+        "deep_rotators__1",
+        "deep_rotators__2"
+      ],
+      "description": "Small deep muscles behind the hip joint.",
+      "function": "Externally rotate the hip and hold the femoral head in the socket."
+    },
+    {
+      "id": "iliopsoas",
+      "label": "Iliopsoas",
+      "layer": "deep",
+      "meshes": [
+        "iliopsoas__0",
+        "iliopsoas__1"
+      ],
+      "description": "Psoas and iliacus muscles joining to insert on the lesser trochanter.",
+      "function": "The strongest hip flexor."
+    },
+    {
+      "id": "iliofemoral_lig",
+      "label": "Iliofemoral ligament",
+      "layer": "ligament",
+      "meshes": [
+        "iliofemoral_lig__0",
+        "iliofemoral_lig__1"
+      ],
+      "description": "Y-shaped ligament at the front of the hip, the strongest in the body.",
+      "function": "Prevents the hip extending too far backwards."
+    },
+    {
+      "id": "pubofemoral_lig",
+      "label": "Pubofemoral ligament",
+      "layer": "ligament",
+      "meshes": [
+        "pubofemoral_lig__0"
+      ],
+      "description": "Ligament at the lower front of the hip.",
+      "function": "Limits excessive abduction and extension."
+    },
+    {
+      "id": "ischiofemoral_lig",
+      "label": "Ischiofemoral ligament",
+      "layer": "ligament",
+      "meshes": [
+        "ischiofemoral_lig__0"
+      ],
+      "description": "Spiral ligament at the back of the hip.",
+      "function": "Limits internal rotation."
+    },
+    {
+      "id": "acetabular_labrum",
+      "label": "Acetabular labrum",
+      "layer": "ligament",
+      "meshes": [
+        "acetabular_labrum__0"
+      ],
+      "description": "Ring of fibrocartilage around the hip socket.",
+      "function": "Deepens the socket and seals the joint fluid; can tear in impingement."
+    },
+    {
+      "id": "hip_bone",
+      "label": "Hip bone (pelvis)",
+      "layer": "bone",
+      "meshes": [
+        "hip_bone__0"
+      ],
+      "description": "Pelvic bone made of ilium, ischium and pubis, containing the acetabulum.",
+      "function": "Socket of the hip and attachment for the gluteal and thigh muscles."
+    },
+    {
+      "id": "femur",
+      "label": "Femur (proximal)",
+      "layer": "bone",
+      "meshes": [
+        "femur__0"
+      ],
+      "description": "Thigh bone; its ball-shaped head fits into the acetabulum.",
+      "function": "Transfers body weight to the leg; the neck is where hip fractures occur."
+    },
+    {
+      "id": "sacrum",
+      "label": "Sacrum",
+      "layer": "bone",
+      "meshes": [
+        "sacrum__0"
+      ],
+      "description": "Triangular bone at the base of the spine.",
+      "function": "Links the spine to the pelvis through the sacroiliac joints."
+    }
+  ]
+}

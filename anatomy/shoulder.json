@@ -1,0 +1,218 @@
+{
+  "region": "shoulder",
+  "label": "Shoulder",
+  "side": "left",
+  "units": "meters",
+  "axes": "+Y up, +Z anterior (front), +X patient left",
+  "defaultView": "front",
+  "originalCenter": [
+    0.1567,
+    1.3873,
+    -0.0271
+  ],
+  "focusSize": [
+    0.19,
+    0.2375,
+    0.19
+  ],
+  "structures": [
+    {
+      "id": "deltoid_anterior",
+      "label": "Deltoid, anterior part",
+      "layer": "superficial",
+      "meshes": [
+        "deltoid_anterior__0"
+      ],
+      "description": "Front third of the deltoid, arising from the outer clavicle.",
+      "function": "Raises the arm forward (flexion) and turns it inwards."
+    },
+    {
+      "id": "deltoid_middle",
+      "label": "Deltoid, middle part",
+      "layer": "superficial",
+      "meshes": [
+        "deltoid_middle__0"
+      ],
+      "description": "Middle third of the deltoid, arising from the acromion.",
+      "function": "Lifts the arm out to the side (abduction), especially from 15° to 90°."
+    },
+    {
+      "id": "deltoid_posterior",
+      "label": "Deltoid, posterior part",
+      "layer": "superficial",
+      "meshes": [
+        "deltoid_posterior__0"
+      ],
+      "description": "Back third of the deltoid, arising from the spine of the scapula.",
+      "function": "Pulls the arm backwards (extension) and turns it outwards."
+    },
+    {
+      "id": "pectoralis_major",
+      "label": "Pectoralis major",
+      "layer": "superficial",
+      "meshes": [
+        "pectoralis_major__0",
+        "pectoralis_major__1",
+        "pectoralis_major__2"
+      ],
+      "description": "Large fan-shaped chest muscle running from the clavicle and sternum to the humerus.",
+      "function": "Brings the arm across the body, turns it inwards and pushes forwards."
+    },
+    {
+      "id": "biceps_brachii",
+      "label": "Biceps brachii",
+      "layer": "superficial",
+      "meshes": [
+        "biceps_brachii__0",
+        "biceps_brachii__1"
+      ],
+      "description": "Two-headed front arm muscle; the long head tendon runs over the top of the humeral head.",
+      "function": "Bends the elbow, turns the palm up and helps raise the arm forward."
+    },
+    {
+      "id": "trapezius_upper",
+      "label": "Trapezius, upper fibers",
+      "layer": "superficial",
+      "meshes": [
+        "trapezius_upper__0"
+      ],
+      "description": "Upper part of the trapezius, from the neck to the outer clavicle.",
+      "function": "Lifts and rotates the shoulder blade upwards when raising the arm."
+    },
+    {
+      "id": "supraspinatus",
+      "label": "Supraspinatus",
+      "layer": "deep",
+      "meshes": [
+        "supraspinatus__0"
+      ],
+      "description": "Rotator cuff muscle above the spine of the scapula; its tendon passes under the acromion.",
+      "function": "Starts lifting the arm sideways and keeps the humeral head centred in the socket."
+    },
+    {
+      "id": "infraspinatus",
+      "label": "Infraspinatus",
+      "layer": "deep",
+      "meshes": [
+        "infraspinatus__0"
+      ],
+      "description": "Rotator cuff muscle covering the back of the shoulder blade below its spine.",
+      "function": "Turns the arm outwards and stabilises the back of the joint."
+    },
+    {
+      "id": "teres_minor",
+      "label": "Teres minor",
+      "layer": "deep",
+      "meshes": [
+        "teres_minor__0"
+      ],
+      "description": "Small rotator cuff muscle along the outer border of the scapula.",
+      "function": "Turns the arm outwards and stabilises the humeral head."
+    },
+    {
+      "id": "subscapularis",
+      "label": "Subscapularis",
+      "layer": "deep",
+      "meshes": [
+        "subscapularis__0"
+      ],
+      "description": "Rotator cuff muscle on the front surface of the shoulder blade, against the ribs.",
+      "function": "Turns the arm inwards and stabilises the front of the joint."
+    },
+    {
+      "id": "pectoralis_minor",
+      "label": "Pectoralis minor",
+      "layer": "deep",
+      "meshes": [
+        "pectoralis_minor__0"
+      ],
+      "description": "Thin muscle under the pectoralis major, from ribs 3–5 to the coracoid process.",
+      "function": "Pulls the shoulder blade forwards and down."
+    },
+    {
+      "id": "glenoid_labrum",
+      "label": "Glenoid labrum",
+      "layer": "ligament",
+      "meshes": [
+        "glenoid_labrum__0"
+      ],
+      "description": "Ring of fibrocartilage around the rim of the shoulder socket.",
+      "function": "Deepens the socket and anchors the biceps tendon and ligaments."
+    },
+    {
+      "id": "shoulder_capsule",
+      "label": "Joint capsule",
+      "layer": "ligament",
+      "meshes": [
+        "shoulder_capsule__0",
+        "shoulder_capsule__1",
+        "shoulder_capsule__2",
+        "shoulder_capsule__3"
+      ],
+      "description": "Loose fibrous sleeve around the shoulder joint, thickened by the glenohumeral ligaments.",
+      "function": "Holds the joint together while allowing the largest range of motion in the body."
+    },
+    {
+      "id": "coracohumeral_lig",
+      "label": "Coracohumeral ligament",
+      "layer": "ligament",
+      "meshes": [
+        "coracohumeral_lig__0"
+      ],
+      "description": "Band from the coracoid process to the top of the humerus.",
+      "function": "Limits the humeral head from sliding down and over-rotating outwards."
+    },
+    {
+      "id": "ac_joint",
+      "label": "Acromioclavicular joint",
+      "layer": "ligament",
+      "meshes": [
+        "ac_joint__0",
+        "ac_joint__1",
+        "ac_joint__2"
+      ],
+      "description": "Small joint between the clavicle and acromion, with the ligaments that hold it.",
+      "function": "Links the arm to the collarbone; its ligaments tear in a \"separated shoulder\"."
+    },
+    {
+      "id": "subdeltoid_bursa",
+      "label": "Subdeltoid bursa",
+      "layer": "ligament",
+      "meshes": [
+        "subdeltoid_bursa__0"
+      ],
+      "description": "Fluid-filled sac between the deltoid and the rotator cuff.",
+      "function": "Lets the cuff glide under the deltoid and acromion; it inflames in impingement."
+    },
+    {
+      "id": "humerus",
+      "label": "Humerus (proximal)",
+      "layer": "bone",
+      "meshes": [
+        "humerus__0"
+      ],
+      "description": "Upper arm bone; its rounded head sits in the shoulder socket.",
+      "function": "Lever for every shoulder movement and attachment for the cuff and deltoid."
+    },
+    {
+      "id": "scapula",
+      "label": "Scapula",
+      "layer": "bone",
+      "meshes": [
+        "scapula__0"
+      ],
+      "description": "Shoulder blade, with the glenoid socket, acromion and coracoid process.",
+      "function": "Mobile base of the shoulder; it glides on the ribcage as the arm moves."
+    },
+    {
+      "id": "clavicle",
+      "label": "Clavicle",
+      "layer": "bone",
+      "meshes": [
+        "clavicle__0"
+      ],
+      "description": "Collarbone, joining the sternum to the shoulder blade.",
+      "function": "Strut that keeps the shoulder away from the chest and transmits force to the trunk."
+    }
+  ]
+}

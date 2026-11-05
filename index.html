@@ -11,7 +11,7 @@
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="preload" href="fonts/atkinson-hyperlegible-next-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
-  <script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
+  <script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js", "three/addons/": "./vendor/addons/" } }</script>
 </head>
 <body data-view="home" data-face="front">
 
@@ -164,7 +164,7 @@
     <div class="anat-body">
       <div class="anat-stage">
         <canvas class="anat-canvas"></canvas>
-        <p class="anat-status" role="status">Loading 3D view…</p>
+        <p class="anat-status" role="status">Loading 3D model…</p>
         <p class="anat-hint">
           <span class="hint-mouse">Drag to rotate · Scroll to zoom · Right-drag to move up or down</span>
           <span class="hint-touch">Drag to rotate · Pinch to zoom · Two-finger drag to move</span>
@@ -183,8 +183,10 @@
           <p class="anat-kind"></p>
           <h3 class="anat-name">Tap a structure</h3>
           <p class="anat-desc"></p>
+          <p class="anat-func" hidden></p>
         </div>
         <div class="anat-list"></div>
+        <p class="anat-credit">3D anatomy models: <a href="https://www.z-anatomy.com/" target="_blank" rel="noopener">Z-Anatomy</a> (<a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>), based on BodyParts3D © The Database Center for Life Science (<a href="https://creativecommons.org/licenses/by-sa/2.1/jp/deed.en" target="_blank" rel="noopener">CC BY-SA 2.1 Japan</a>).</p>
       </aside>
     </div>
   </dialog>

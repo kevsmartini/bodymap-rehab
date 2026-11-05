@@ -1,0 +1,181 @@
+{
+  "region": "neck",
+  "label": "Neck",
+  "side": "midline",
+  "units": "meters",
+  "axes": "+Y up, +Z anterior (front), +X patient left",
+  "defaultView": "front",
+  "originalCenter": [
+    0,
+    1.3537,
+    -0.0329
+  ],
+  "focusSize": [
+    0.2746,
+    0.4672,
+    0.1945
+  ],
+  "structures": [
+    {
+      "id": "scm",
+      "label": "Sternocleidomastoid",
+      "layer": "superficial",
+      "meshes": [
+        "scm__0",
+        "scm__1"
+      ],
+      "description": "Prominent diagonal muscle from the sternum and clavicle to behind the ear.",
+      "function": "Turns the head to the opposite side and bends the neck forwards."
+    },
+    {
+      "id": "trapezius_upper",
+      "label": "Trapezius, upper fibers",
+      "layer": "superficial",
+      "meshes": [
+        "trapezius_upper__0",
+        "trapezius_upper__1"
+      ],
+      "description": "Upper part of the trapezius covering the back of the neck.",
+      "function": "Lifts the shoulders and extends the head; often tight with stress."
+    },
+    {
+      "id": "splenius",
+      "label": "Splenius capitis & cervicis",
+      "layer": "superficial",
+      "meshes": [
+        "splenius__0",
+        "splenius__1",
+        "splenius__2",
+        "splenius__3"
+      ],
+      "description": "Bandage-like muscles under the trapezius at the back of the neck.",
+      "function": "Extend and rotate the head and neck."
+    },
+    {
+      "id": "levator_scapulae",
+      "label": "Levator scapulae",
+      "layer": "superficial",
+      "meshes": [
+        "levator_scapulae__0",
+        "levator_scapulae__1"
+      ],
+      "description": "Muscle from the upper neck vertebrae to the top of the shoulder blade.",
+      "function": "Lifts the shoulder blade and tilts the neck; a classic \"stiff neck\" muscle."
+    },
+    {
+      "id": "scalenes",
+      "label": "Scalenes",
+      "layer": "deep",
+      "meshes": [
+        "scalenes__0",
+        "scalenes__1",
+        "scalenes__2",
+        "scalenes__3",
+        "scalenes__4",
+        "scalenes__5"
+      ],
+      "description": "Three muscles on the side of the neck attaching to the first two ribs.",
+      "function": "Bend the neck sideways and lift the ribs in deep breathing."
+    },
+    {
+      "id": "deep_extensors",
+      "label": "Deep neck extensors",
+      "layer": "deep",
+      "meshes": [
+        "deep_extensors__0",
+        "deep_extensors__1",
+        "deep_extensors__2",
+        "deep_extensors__3",
+        "deep_extensors__4",
+        "deep_extensors__5",
+        "deep_extensors__6",
+        "deep_extensors__7"
+      ],
+      "description": "Layered muscles running along the back of the cervical spine.",
+      "function": "Hold the head upright and control each vertebra."
+    },
+    {
+      "id": "deep_flexors",
+      "label": "Deep neck flexors",
+      "layer": "deep",
+      "meshes": [
+        "deep_flexors__0",
+        "deep_flexors__1",
+        "deep_flexors__2",
+        "deep_flexors__3"
+      ],
+      "description": "Muscles on the front of the cervical spine, behind the throat.",
+      "function": "Tuck the chin and stabilise the neck; weak in \"forward head\" posture."
+    },
+    {
+      "id": "nuchal_lig",
+      "label": "Nuchal ligament",
+      "layer": "ligament",
+      "meshes": [
+        "nuchal_lig__0"
+      ],
+      "description": "Fibrous sheet in the midline of the back of the neck.",
+      "function": "Anchors neck muscles and limits forward bending."
+    },
+    {
+      "id": "cervical_discs",
+      "label": "Cervical discs",
+      "layer": "ligament",
+      "meshes": [
+        "cervical_discs__0",
+        "cervical_discs__1",
+        "cervical_discs__2",
+        "cervical_discs__3",
+        "cervical_discs__4",
+        "cervical_discs__5"
+      ],
+      "description": "Cartilage cushions between the neck vertebrae.",
+      "function": "Absorb load and allow movement; C5-C6 and C6-C7 herniate most."
+    },
+    {
+      "id": "atlas_axis",
+      "label": "Atlas (C1) & axis (C2)",
+      "layer": "bone",
+      "meshes": [
+        "atlas_axis__0",
+        "atlas_axis__1"
+      ],
+      "description": "First two vertebrae, specialised to carry and rotate the skull.",
+      "function": "About half of neck rotation happens between C1 and C2."
+    },
+    {
+      "id": "cervical_vertebrae",
+      "label": "Cervical vertebrae C3–C7",
+      "layer": "bone",
+      "meshes": [
+        "cervical_vertebrae__0",
+        "cervical_vertebrae__1",
+        "cervical_vertebrae__2",
+        "cervical_vertebrae__3",
+        "cervical_vertebrae__4"
+      ],
+      "description": "Lower five neck vertebrae.",
+      "function": "Support the head and allow flexion, extension and side bending."
+    },
+    {
+      "id": "occipital",
+      "label": "Occipital bone",
+      "layer": "bone",
+      "meshes": [
+        "occipital__0"
+      ],
+      "description": "Back of the skull, resting on the atlas.",
+      "function": "Attachment for the neck extensors."
+    },
+    {
+      "id": "hyoid",
+      "label": "Hyoid bone",
+      "layer": "bone",
+      "meshes": [
+        "hyoid__0"
+      ],
+      "description": "U-shaped bone in the front of the neck that touches no other bone.",
+      "function": "Anchor for the tongue and swallowing muscles."
+    }
+  ]
+}

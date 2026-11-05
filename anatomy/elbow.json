@@ -1,0 +1,194 @@
+{
+  "region": "elbow",
+  "label": "Elbow",
+  "side": "left",
+  "units": "meters",
+  "axes": "+Y up, +Z anterior (front), +X patient left",
+  "defaultView": "front",
+  "originalCenter": [
+    0.2197,
+    1.1029,
+    -0.0367
+  ],
+  "focusSize": [
+    0.19,
+    0.2375,
+    0.19
+  ],
+  "structures": [
+    {
+      "id": "biceps_brachii",
+      "label": "Biceps brachii",
+      "layer": "superficial",
+      "meshes": [
+        "biceps_brachii__0",
+        "biceps_brachii__1"
+      ],
+      "description": "Two-headed front arm muscle inserting on the radius.",
+      "function": "Bends the elbow and is the main muscle turning the palm up."
+    },
+    {
+      "id": "triceps_brachii",
+      "label": "Triceps brachii",
+      "layer": "superficial",
+      "meshes": [
+        "triceps_brachii__0",
+        "triceps_brachii__1",
+        "triceps_brachii__2"
+      ],
+      "description": "Three-headed muscle on the back of the arm, inserting on the olecranon.",
+      "function": "Straightens the elbow; the long head also extends the shoulder."
+    },
+    {
+      "id": "brachioradialis",
+      "label": "Brachioradialis",
+      "layer": "superficial",
+      "meshes": [
+        "brachioradialis__0"
+      ],
+      "description": "Forearm muscle from the lower humerus to the wrist end of the radius.",
+      "function": "Bends the elbow, strongest with the thumb pointing up."
+    },
+    {
+      "id": "pronator_teres",
+      "label": "Pronator teres",
+      "layer": "superficial",
+      "meshes": [
+        "pronator_teres__0",
+        "pronator_teres__1"
+      ],
+      "description": "Muscle crossing the front of the elbow from the medial epicondyle to the radius.",
+      "function": "Turns the palm down and helps bend the elbow."
+    },
+    {
+      "id": "flexor_carpi_radialis",
+      "label": "Flexor carpi radialis",
+      "layer": "superficial",
+      "meshes": [
+        "flexor_carpi_radialis__0"
+      ],
+      "description": "Forearm flexor arising from the medial epicondyle (common flexor origin).",
+      "function": "Bends the wrist; overuse of this origin causes golfer's elbow."
+    },
+    {
+      "id": "ecrl",
+      "label": "Extensor carpi radialis longus",
+      "layer": "superficial",
+      "meshes": [
+        "ecrl__0"
+      ],
+      "description": "Forearm extensor arising above the lateral epicondyle.",
+      "function": "Extends the wrist and bends it towards the thumb."
+    },
+    {
+      "id": "ecrb",
+      "label": "Extensor carpi radialis brevis",
+      "layer": "superficial",
+      "meshes": [
+        "ecrb__0"
+      ],
+      "description": "Forearm extensor arising from the lateral epicondyle (common extensor origin).",
+      "function": "Extends the wrist; its tendon origin is the usual site of tennis elbow."
+    },
+    {
+      "id": "anconeus",
+      "label": "Anconeus",
+      "layer": "superficial",
+      "meshes": [
+        "anconeus__0"
+      ],
+      "description": "Small triangular muscle at the back of the elbow.",
+      "function": "Assists elbow extension and steadies the joint."
+    },
+    {
+      "id": "brachialis",
+      "label": "Brachialis",
+      "layer": "deep",
+      "meshes": [
+        "brachialis__0"
+      ],
+      "description": "Muscle under the biceps attaching to the ulna.",
+      "function": "The main elbow flexor in every forearm position."
+    },
+    {
+      "id": "supinator",
+      "label": "Supinator",
+      "layer": "deep",
+      "meshes": [
+        "supinator__0"
+      ],
+      "description": "Deep muscle wrapping around the upper radius.",
+      "function": "Turns the palm up, especially with the elbow straight."
+    },
+    {
+      "id": "ucl",
+      "label": "Ulnar collateral ligament",
+      "layer": "ligament",
+      "meshes": [
+        "ucl__0"
+      ],
+      "description": "Fan-shaped ligament on the inner side of the elbow.",
+      "function": "Resists valgus stress; it is the ligament injured in throwers."
+    },
+    {
+      "id": "rcl",
+      "label": "Radial collateral ligament",
+      "layer": "ligament",
+      "meshes": [
+        "rcl__0"
+      ],
+      "description": "Ligament on the outer side of the elbow, blending with the annular ligament.",
+      "function": "Resists varus stress on the elbow."
+    },
+    {
+      "id": "annular_lig",
+      "label": "Annular ligament",
+      "layer": "ligament",
+      "meshes": [
+        "annular_lig__0"
+      ],
+      "description": "Ring of ligament wrapping the head of the radius.",
+      "function": "Holds the radial head against the ulna while it spins."
+    },
+    {
+      "id": "elbow_capsule",
+      "label": "Joint capsule",
+      "layer": "ligament",
+      "meshes": [
+        "elbow_capsule__0"
+      ],
+      "description": "Fibrous sleeve enclosing the humerus, ulna and radius at the elbow.",
+      "function": "Contains the joint fluid and links the three bones."
+    },
+    {
+      "id": "humerus",
+      "label": "Humerus (distal)",
+      "layer": "bone",
+      "meshes": [
+        "humerus__0"
+      ],
+      "description": "Upper arm bone; its lower end forms the trochlea, capitulum and epicondyles.",
+      "function": "Upper half of the hinge and origin of the forearm muscles."
+    },
+    {
+      "id": "ulna",
+      "label": "Ulna",
+      "layer": "bone",
+      "meshes": [
+        "ulna__0"
+      ],
+      "description": "Inner forearm bone; its olecranon is the point of the elbow.",
+      "function": "Forms the main hinge with the humerus."
+    },
+    {
+      "id": "radius",
+      "label": "Radius",
+      "layer": "bone",
+      "meshes": [
+        "radius__0"
+      ],
+      "description": "Outer forearm bone; its disc-shaped head spins at the elbow.",
+      "function": "Rotates around the ulna to turn the palm up and down."
+    }
+  ]
+}

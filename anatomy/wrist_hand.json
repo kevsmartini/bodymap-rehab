@@ -1,0 +1,233 @@
+{
+  "region": "wrist_hand",
+  "label": "Wrist & hand",
+  "side": "left",
+  "units": "meters",
+  "axes": "+Y up, +Z anterior (front), +X patient left",
+  "defaultView": "front",
+  "originalCenter": [
+    0.2632,
+    0.8546,
+    0.02
+  ],
+  "focusSize": [
+    0.19,
+    0.2375,
+    0.19
+  ],
+  "structures": [
+    {
+      "id": "flexor_retinaculum",
+      "label": "Flexor retinaculum",
+      "layer": "superficial",
+      "meshes": [
+        "flexor_retinaculum__0"
+      ],
+      "description": "Strong band across the front of the wrist forming the roof of the carpal tunnel.",
+      "function": "Keeps the finger flexor tendons in place; the median nerve runs beneath it."
+    },
+    {
+      "id": "extensor_retinaculum",
+      "label": "Extensor retinaculum",
+      "layer": "superficial",
+      "meshes": [
+        "extensor_retinaculum__0"
+      ],
+      "description": "Band across the back of the wrist dividing the extensor tendons into compartments.",
+      "function": "Stops the extensor tendons bowstringing when the wrist extends."
+    },
+    {
+      "id": "palmar_aponeurosis",
+      "label": "Palmar aponeurosis",
+      "layer": "superficial",
+      "meshes": [
+        "palmar_aponeurosis__0"
+      ],
+      "description": "Triangular sheet of tough tissue under the skin of the palm.",
+      "function": "Protects tendons and grips; it thickens in Dupuytren's disease."
+    },
+    {
+      "id": "thenar",
+      "label": "Thenar muscles",
+      "layer": "superficial",
+      "meshes": [
+        "thenar__0",
+        "thenar__1",
+        "thenar__2",
+        "thenar__3"
+      ],
+      "description": "Group of short thumb muscles forming the ball of the thumb.",
+      "function": "Move the thumb across the palm to pinch and grasp (opposition)."
+    },
+    {
+      "id": "hypothenar",
+      "label": "Hypothenar muscles",
+      "layer": "superficial",
+      "meshes": [
+        "hypothenar__0",
+        "hypothenar__1",
+        "hypothenar__2"
+      ],
+      "description": "Group of muscles forming the fleshy edge of the palm below the little finger.",
+      "function": "Move the little finger and cup the palm."
+    },
+    {
+      "id": "adductor_pollicis",
+      "label": "Adductor pollicis",
+      "layer": "deep",
+      "meshes": [
+        "adductor_pollicis__0",
+        "adductor_pollicis__1"
+      ],
+      "description": "Deep fan-shaped muscle in the web between thumb and index.",
+      "function": "Pulls the thumb against the palm for a strong key grip."
+    },
+    {
+      "id": "lumbricals",
+      "label": "Lumbricals",
+      "layer": "deep",
+      "meshes": [
+        "lumbricals__0"
+      ],
+      "description": "Four small worm-like muscles attached to the deep flexor tendons.",
+      "function": "Bend the knuckles while straightening the finger joints."
+    },
+    {
+      "id": "interossei",
+      "label": "Interossei",
+      "layer": "deep",
+      "meshes": [
+        "interossei__0",
+        "interossei__1"
+      ],
+      "description": "Muscles between the metacarpal bones, on the back and front.",
+      "function": "Spread (dorsal) and close (palmar) the fingers."
+    },
+    {
+      "id": "fds",
+      "label": "Flexor digitorum superficialis",
+      "layer": "deep",
+      "meshes": [
+        "fds__0",
+        "fds__1"
+      ],
+      "description": "Forearm muscle whose four tendons run through the carpal tunnel to the fingers.",
+      "function": "Bends the middle joints of the fingers and the wrist."
+    },
+    {
+      "id": "fdp",
+      "label": "Flexor digitorum profundus",
+      "layer": "deep",
+      "meshes": [
+        "fdp__0"
+      ],
+      "description": "Deep forearm flexor whose tendons reach the fingertips.",
+      "function": "Bends the fingertip joints; essential for grip."
+    },
+    {
+      "id": "pronator_quadratus",
+      "label": "Pronator quadratus",
+      "layer": "deep",
+      "meshes": [
+        "pronator_quadratus__0"
+      ],
+      "description": "Square muscle across the lower radius and ulna.",
+      "function": "Turns the palm down and holds the two forearm bones together."
+    },
+    {
+      "id": "wrist_collaterals",
+      "label": "Wrist collateral ligaments",
+      "layer": "ligament",
+      "meshes": [
+        "wrist_collaterals__0",
+        "wrist_collaterals__1"
+      ],
+      "description": "Ligaments on the thumb and little-finger sides of the wrist.",
+      "function": "Limit side-to-side tilting of the wrist."
+    },
+    {
+      "id": "tfcc_disc",
+      "label": "Triangular fibrocartilage (disc)",
+      "layer": "ligament",
+      "meshes": [
+        "tfcc_disc__0"
+      ],
+      "description": "Cartilage disc on the little-finger side of the wrist.",
+      "function": "Cushions the ulna and stabilises forearm rotation; a common cause of ulnar wrist pain."
+    },
+    {
+      "id": "carpals",
+      "label": "Carpal bones",
+      "layer": "bone",
+      "meshes": [
+        "carpals__0",
+        "carpals__1",
+        "carpals__2",
+        "carpals__3",
+        "carpals__4",
+        "carpals__5",
+        "carpals__6",
+        "carpals__7"
+      ],
+      "description": "Eight small bones in two rows forming the wrist.",
+      "function": "Give the wrist its flexibility and form the floor of the carpal tunnel."
+    },
+    {
+      "id": "metacarpals",
+      "label": "Metacarpals",
+      "layer": "bone",
+      "meshes": [
+        "metacarpals__0",
+        "metacarpals__1",
+        "metacarpals__2",
+        "metacarpals__3",
+        "metacarpals__4"
+      ],
+      "description": "Five long bones of the palm.",
+      "function": "Form the palm and the knuckles."
+    },
+    {
+      "id": "hand_phalanges",
+      "label": "Phalanges",
+      "layer": "bone",
+      "meshes": [
+        "hand_phalanges__0",
+        "hand_phalanges__1",
+        "hand_phalanges__2",
+        "hand_phalanges__3",
+        "hand_phalanges__4",
+        "hand_phalanges__5",
+        "hand_phalanges__6",
+        "hand_phalanges__7",
+        "hand_phalanges__8",
+        "hand_phalanges__9",
+        "hand_phalanges__10",
+        "hand_phalanges__11",
+        "hand_phalanges__12",
+        "hand_phalanges__13"
+      ],
+      "description": "Finger bones: three in each finger, two in the thumb.",
+      "function": "Allow the fingers to bend and grip."
+    },
+    {
+      "id": "radius",
+      "label": "Radius (distal)",
+      "layer": "bone",
+      "meshes": [
+        "radius__0"
+      ],
+      "description": "Outer forearm bone; its wide lower end carries most of the wrist.",
+      "function": "Main bone of the wrist joint; the usual site of wrist fractures."
+    },
+    {
+      "id": "ulna",
+      "label": "Ulna (distal)",
+      "layer": "bone",
+      "meshes": [
+        "ulna__0"
+      ],
+      "description": "Inner forearm bone, ending in the ulnar styloid.",
+      "function": "Pivot around which the radius turns."
+    }
+  ]
+}

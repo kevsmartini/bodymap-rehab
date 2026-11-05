@@ -15,10 +15,10 @@ colors:
   rail-line: "#24503F"
   rail-text-2: "#BCC4B3"
   stage: "#061A13"
-  scene-muscle: "#B4382F"
-  scene-tendon: "#EFE7DA"
-  scene-bone: "#E4D8C0"
-  scene-cartilage: "#A9D2EA"
+  scene-muscle: "#B23A2C"
+  scene-muscle-deep: "#8A2A22"
+  scene-ligament: "#E6E0D3"
+  scene-bone: "#D8CBB0"
   scene-stage: "#8B8B88"
 typography:
   display:
@@ -251,7 +251,7 @@ The interface is a consulting-room tool, used live by a clinician while the pati
 
 Surfaces are flat. Depth comes from the dark forest rail against the warm ground, hairline borders and cream panels, never from shadows. Peach is the one light touch on the rail: it marks what is currently selected. Motion is short and elastic, with one signature: opening a phase stretches its band.
 
-One place steps outside the client palette on purpose: the 3D anatomy viewer. Inside its stage the body is drawn in anatomical colours the user asked for (red muscle fading to off-white tendon, bone, light-blue cartilage) on a neutral grey ground, lit like a model. Everything around that stage, the dialog, the list, the controls, stays forest, cream and peach.
+One place steps outside the client palette on purpose: the 3D anatomy viewer. Inside its stage the body is drawn in anatomical colours the user asked for (real Z-Anatomy meshes: red muscle, ivory ligament and cartilage, bone) on a neutral grey ground, lit like a model. Everything around that stage, the dialog, the list, the controls, stays forest, cream and peach.
 
 **Key Characteristics:**
 - Four phase bands running light to dark with load: peach, tan, amber, forest.
@@ -292,19 +292,20 @@ Each band is set per element via `data-band` (peach, tan, amber, forest), which 
 
 ### Anatomical Scene (scoped)
 Used only inside the 3D anatomy stage, set as material and background colours in the scene; requested explicitly by the user so the model reads as anatomy, not as brand.
-- **Muscle Red** (scene-muscle): muscle bellies, with a fibre texture running along each muscle's length.
-- **Tendon Ivory** (scene-tendon): tendons; each muscle fades from red into tendon at both ends. The muscle swatch in the structure list repeats this as tendon / muscle / tendon.
-- **Bone** (scene-bone): bones.
-- **Cartilage Blue** (scene-cartilage): cartilage, menisci and discs.
+- **Muscle Red** (scene-muscle, scene-muscle-deep): superficial and deep muscles, physical material with clearcoat and sheen and a procedural fibre relief along each muscle's main axis; each muscle's hue shifts slightly so neighbours read apart. Deep muscles are a step darker. The list swatches repeat the two reds.
+- **Ligament Ivory** (scene-ligament): ligaments, cartilage, menisci and discs, glossier than bone.
+- **Bone** (scene-bone): bones, matte.
 - **Neutral Stage Grey** (scene-stage): the stage background and the loading/status screen behind the canvas, a neutral mid grey so the anatomical colours read true. Text on it is forest.
 - **Selection glow:** the selected structure glows peach (emissive at 0.42); no new hue.
 
-Lighting is part of the scene material: a hemisphere fill (warm light sky over a warm dark ground), a warm key light and a cool rim light, with key and rim attached to the camera so the model is lit the same way from every angle.
+Lighting is part of the scene material: a soft room environment map (intensity 0.42), a low hemisphere fill, a warm key, a cool rim behind the model and a faint fill, with key, rim and fill attached to the camera so the model is lit the same way from every angle. ACES tone mapping at 0.95.
+
+The meshes are Z-Anatomy (CC BY-SA 4.0), based on BodyParts3D © DBCLS (CC BY-SA 2.1 Japan), one GLB plus a JSON structure list per area in `anatomy/`, loaded only when that area's viewer opens. Limbs are modelled on the patient's left and mirrored for the right.
 
 ### Named Rules
 **The No White Rule.** There is no #FFFFFF, and no near-white cooler than cream, anywhere in the system. Cream is the lightest surface and the lightest text; new light surfaces are cream or ground.
 
-**The Anatomical Scene Exception.** Inside the 3D anatomy stage, and only there, the scene palette applies: tendon ivory, bone, cartilage blue and the neutral grey stage sit outside the No White and Three Neutral Roles rules because the user asked for anatomical colour. The exception ends at the canvas edge: app chrome, including the viewer's own dialog, list and controls, stays on the client palette, and no scene colour is used as a UI colour.
+**The Anatomical Scene Exception.** Inside the 3D anatomy stage, and only there, the scene palette applies: ligament ivory, bone and the neutral grey stage sit outside the No White and Three Neutral Roles rules because the user asked for anatomical colour. The exception ends at the canvas edge: app chrome, including the viewer's own dialog, list and controls, stays on the client palette, and no scene colour is used as a UI colour.
 
 **The Light To Dark Rule.** Phase tone deepens with load: peach (1), tan (2), amber (3), forest (4). A new phase surface takes its band from `data-band`, never a free-picked hue.
 
@@ -420,7 +421,7 @@ A modal 3D model of the area's anatomy, opened from the Anatomy outline button o
 - **Dialog:** forest surface with cream text, 6px radius, up to 84 × 54rem, rises in like the player (0.4s) over the forest backdrop. A header bar (rail-line rule beneath) carries the title in brand type, a rail-sage meta line and a close icon button.
 - **Stage:** the neutral stage-grey canvas, drawn in the scoped scene palette (see Colors). Drag rotates, scroll or pinch zooms, right-drag or two-finger drag pans; a tap without movement selects the structure under it, and hover shows a pointer over structures. A caption-type hint on cream chips sits top left, with mouse and touch wording.
 - **Floating controls:** centred along the stage's bottom edge. A dark segmented control (Front / Side / Back) and the "Separate layers" toggle, a rail-raised button with a rail-line border and 6px corners, hover rail-line, pressed peach with forest text. Both carry the floating-control shadow.
-- **Structure panel:** a 21rem column with a rail-line left border. The info block shows the peach kind label, the structure name in brand type and a rail-sage description (cream once a structure is selected). Below it, the scrolling list groups structures under rail-sage label headings; each item is a 2.5rem row with a kind swatch and body-small text, hover rail-raised, pressed peach with forest text at 600. Selecting in the list or the scene keeps both in step; selecting again clears.
+- **Structure panel:** a 21rem column with a rail-line left border. The info block shows the peach kind label, the structure name in brand type, a rail-sage description (cream once a structure is selected) and a "Function." line (cream bold lead-in, rail-sage text). The dialog meta line gives the patient's side for limbs and the structure count. Below it, the scrolling list groups structures under rail-sage label headings (Superficial muscles, Deep muscles, Ligaments & cartilage, Bones); each item is a 2.5rem row with a kind swatch and body-small text, hover rail-raised, pressed peach with forest text at 600. Selecting in the list or the scene keeps both in step; selecting again clears. A fixed credit line under the list (0.75rem, rail sage, rail-line rule above; 0.6875rem below 56rem) carries the required Z-Anatomy / BodyParts3D attribution with licence links.
 - **Motion:** a camera view turn takes 750ms and the layer separation 650ms, both on an ease-out quart (1 − (1 − t)⁴); under reduced motion both land instantly.
 
 ### Send List (WhatsApp)
@@ -455,6 +456,6 @@ The clinician gathers videos into a list and sends the links to the patient on W
 - **Don't** add a neutral outside the three roles per surface (primary text, secondary text, hairline).
 - **Don't** use Barlow Condensed for anything but the uppercase "PHASE n" band tag.
 - **Don't** add box-shadows; separate with tone and hairlines. The only shadow is the floating-control shadow on controls over the 3D canvas.
-- **Don't** use a scene colour (muscle red, tendon ivory, bone, cartilage blue, stage grey) anywhere in the app chrome.
+- **Don't** use a scene colour (muscle red, ligament ivory, bone, stage grey) anywhere in the app chrome.
 - **Don't** go past 6px on container corners; circles are reserved for the play button, map dots and anatomy material swatches.
 - **Don't** collapse or hide the rail above 56rem.

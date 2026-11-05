@@ -1,0 +1,214 @@
+{
+  "region": "knee",
+  "label": "Knee",
+  "side": "left",
+  "units": "meters",
+  "axes": "+Y up, +Z anterior (front), +X patient left",
+  "defaultView": "front",
+  "originalCenter": [
+    0.0763,
+    0.4257,
+    -0.0356
+  ],
+  "focusSize": [
+    0.19,
+    0.2375,
+    0.19
+  ],
+  "structures": [
+    {
+      "id": "rectus_femoris",
+      "label": "Rectus femoris",
+      "layer": "superficial",
+      "meshes": [
+        "rectus_femoris__0"
+      ],
+      "description": "Central quadriceps muscle; here it includes the patellar tendon to the tibia.",
+      "function": "Straightens the knee and flexes the hip."
+    },
+    {
+      "id": "vastus_lateralis",
+      "label": "Vastus lateralis",
+      "layer": "superficial",
+      "meshes": [
+        "vastus_lateralis__0"
+      ],
+      "description": "Largest quadriceps head, on the outer thigh.",
+      "function": "Straightens the knee."
+    },
+    {
+      "id": "vastus_medialis",
+      "label": "Vastus medialis",
+      "layer": "superficial",
+      "meshes": [
+        "vastus_medialis__0"
+      ],
+      "description": "Inner quadriceps head forming the teardrop above the knee.",
+      "function": "Straightens the knee and helps keep the kneecap on track."
+    },
+    {
+      "id": "hamstrings_medial",
+      "label": "Semitendinosus & semimembranosus",
+      "layer": "superficial",
+      "meshes": [
+        "hamstrings_medial__0",
+        "hamstrings_medial__1"
+      ],
+      "description": "Inner hamstrings, from the sitting bone to the inner tibia.",
+      "function": "Bend the knee, extend the hip and rotate the shin inwards."
+    },
+    {
+      "id": "biceps_femoris",
+      "label": "Biceps femoris",
+      "layer": "superficial",
+      "meshes": [
+        "biceps_femoris__0",
+        "biceps_femoris__1"
+      ],
+      "description": "Outer hamstring, inserting on the head of the fibula.",
+      "function": "Bends the knee, extends the hip and rotates the shin outwards."
+    },
+    {
+      "id": "gastrocnemius",
+      "label": "Gastrocnemius",
+      "layer": "superficial",
+      "meshes": [
+        "gastrocnemius__0",
+        "gastrocnemius__1"
+      ],
+      "description": "Two-headed calf muscle arising just above the knee.",
+      "function": "Points the foot and helps bend the knee."
+    },
+    {
+      "id": "it_band",
+      "label": "Iliotibial band",
+      "layer": "superficial",
+      "meshes": [
+        "it_band__0"
+      ],
+      "description": "Thick band of fascia on the outer thigh ending at the tibia.",
+      "function": "Stabilises the outer knee; irritated in runner's knee (ITB syndrome)."
+    },
+    {
+      "id": "vastus_intermedius",
+      "label": "Vastus intermedius",
+      "layer": "deep",
+      "meshes": [
+        "vastus_intermedius__0"
+      ],
+      "description": "Quadriceps head lying directly on the femur under the rectus femoris.",
+      "function": "Straightens the knee."
+    },
+    {
+      "id": "popliteus",
+      "label": "Popliteus",
+      "layer": "deep",
+      "meshes": [
+        "popliteus__0"
+      ],
+      "description": "Small deep muscle behind the knee.",
+      "function": "\"Unlocks\" the straight knee by rotating the tibia inwards."
+    },
+    {
+      "id": "acl",
+      "label": "Anterior cruciate ligament (ACL)",
+      "layer": "ligament",
+      "meshes": [
+        "acl__0"
+      ],
+      "description": "Ligament crossing inside the knee from the femur to the front of the tibia.",
+      "function": "Stops the shin sliding forwards and controls rotation; often torn when pivoting."
+    },
+    {
+      "id": "pcl",
+      "label": "Posterior cruciate ligament (PCL)",
+      "layer": "ligament",
+      "meshes": [
+        "pcl__0"
+      ],
+      "description": "Thickest knee ligament, crossing behind the ACL.",
+      "function": "Stops the shin sliding backwards."
+    },
+    {
+      "id": "mcl",
+      "label": "Medial collateral ligament (MCL)",
+      "layer": "ligament",
+      "meshes": [
+        "mcl__0",
+        "mcl__1"
+      ],
+      "description": "Broad ligament on the inner side of the knee.",
+      "function": "Resists the knee buckling inwards (valgus); the most commonly sprained knee ligament."
+    },
+    {
+      "id": "lcl",
+      "label": "Lateral collateral ligament (LCL)",
+      "layer": "ligament",
+      "meshes": [
+        "lcl__0"
+      ],
+      "description": "Cord-like ligament from the femur to the fibula.",
+      "function": "Resists the knee bowing outwards (varus)."
+    },
+    {
+      "id": "medial_meniscus",
+      "label": "Medial meniscus",
+      "layer": "ligament",
+      "meshes": [
+        "medial_meniscus__0"
+      ],
+      "description": "C-shaped cartilage cushion on the inner tibia.",
+      "function": "Absorbs shock and spreads load; torn more often than the lateral one."
+    },
+    {
+      "id": "lateral_meniscus",
+      "label": "Lateral meniscus",
+      "layer": "ligament",
+      "meshes": [
+        "lateral_meniscus__0"
+      ],
+      "description": "O-shaped cartilage cushion on the outer tibia.",
+      "function": "Absorbs shock and improves the fit of the joint."
+    },
+    {
+      "id": "femur",
+      "label": "Femur (distal)",
+      "layer": "bone",
+      "meshes": [
+        "femur__0"
+      ],
+      "description": "Thigh bone; its lower end forms the two condyles.",
+      "function": "Upper surface of the knee joint."
+    },
+    {
+      "id": "patella",
+      "label": "Patella",
+      "layer": "bone",
+      "meshes": [
+        "patella__0"
+      ],
+      "description": "Kneecap, a sesamoid bone inside the quadriceps tendon.",
+      "function": "Increases the leverage of the quadriceps by up to 30%."
+    },
+    {
+      "id": "tibia",
+      "label": "Tibia",
+      "layer": "bone",
+      "meshes": [
+        "tibia__0"
+      ],
+      "description": "Shin bone; its flat top carries the menisci.",
+      "function": "Main weight-bearing bone of the lower leg."
+    },
+    {
+      "id": "fibula",
+      "label": "Fibula",
+      "layer": "bone",
+      "meshes": [
+        "fibula__0"
+      ],
+      "description": "Thin outer bone of the lower leg.",
+      "function": "Attachment for the LCL and biceps femoris; bears little weight."
+    }
+  ]
+}

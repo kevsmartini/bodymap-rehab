@@ -465,12 +465,12 @@
     const region = regionsById.get(regionId);
     if (!region) return;
     const side = region.paired ? (state.region === regionId ? state.side : "right") : null;
-    anatStatus.textContent = "Loading 3D view…";
+    anatStatus.textContent = "Loading 3D model…";
     anatStatus.hidden = false;
     if (!anatDialog.open) anatDialog.showModal();
     try {
       viewerModule = viewerModule || await import("./anatomy-viewer.js");
-      viewerModule.showAnatomy(anatDialog, regionId, side);
+      await viewerModule.showAnatomy(anatDialog, regionId, side);
     } catch (err) {
       anatStatus.textContent = /webgl/i.test(String(err && err.message))
         ? "The 3D view needs WebGL, which this browser or device doesn’t support."

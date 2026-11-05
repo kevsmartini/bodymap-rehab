@@ -1,0 +1,173 @@
+{
+  "region": "lower_back",
+  "label": "Lower back",
+  "side": "midline",
+  "units": "meters",
+  "axes": "+Y up, +Z anterior (front), +X patient left",
+  "defaultView": "back",
+  "originalCenter": [
+    0,
+    1.1123,
+    -0.0415
+  ],
+  "focusSize": [
+    0.3693,
+    0.6735,
+    0.157
+  ],
+  "structures": [
+    {
+      "id": "latissimus",
+      "label": "Latissimus dorsi",
+      "layer": "superficial",
+      "meshes": [
+        "latissimus__0",
+        "latissimus__1"
+      ],
+      "description": "Broad back muscle that starts on the lower spine and pelvis via the thoracolumbar fascia.",
+      "function": "Pulls the arm down and back; also stiffens the lower back."
+    },
+    {
+      "id": "thoracolumbar_fascia",
+      "label": "Thoracolumbar fascia",
+      "layer": "superficial",
+      "meshes": [
+        "thoracolumbar_fascia__0",
+        "thoracolumbar_fascia__1"
+      ],
+      "description": "Diamond-shaped sheet of connective tissue over the lower back.",
+      "function": "Links the lats, glutes and core into one stabilising \"corset\"."
+    },
+    {
+      "id": "gluteus_medius",
+      "label": "Gluteus medius",
+      "layer": "superficial",
+      "meshes": [
+        "gluteus_medius__0",
+        "gluteus_medius__1"
+      ],
+      "description": "Fan-shaped muscle on the side of the pelvis.",
+      "function": "Keeps the pelvis level; weakness often contributes to back pain."
+    },
+    {
+      "id": "erector_lumbar",
+      "label": "Erector spinae (lumbar)",
+      "layer": "deep",
+      "meshes": [
+        "erector_lumbar__0",
+        "erector_lumbar__1",
+        "erector_lumbar__2",
+        "erector_lumbar__3"
+      ],
+      "description": "Thick muscle columns on both sides of the lumbar spine.",
+      "function": "Extend the spine; work hard in deadlifts and lifting."
+    },
+    {
+      "id": "multifidus",
+      "label": "Multifidus",
+      "layer": "deep",
+      "meshes": [
+        "multifidus__0",
+        "multifidus__1"
+      ],
+      "description": "Deepest back muscle, packed against the lumbar vertebrae.",
+      "function": "Stabilises each lumbar segment; often weak after back pain."
+    },
+    {
+      "id": "quadratus_lumborum",
+      "label": "Quadratus lumborum",
+      "layer": "deep",
+      "meshes": [
+        "quadratus_lumborum__0",
+        "quadratus_lumborum__1"
+      ],
+      "description": "Square muscle from the pelvis to the lowest rib and lumbar vertebrae.",
+      "function": "Bends the trunk sideways and hitches the hip; a common source of back pain."
+    },
+    {
+      "id": "psoas",
+      "label": "Psoas major",
+      "layer": "deep",
+      "meshes": [
+        "psoas__0",
+        "psoas__1"
+      ],
+      "description": "Long muscle from the lumbar vertebrae to the femur.",
+      "function": "Flexes the hip and stabilises the lumbar spine."
+    },
+    {
+      "id": "lumbar_discs",
+      "label": "Lumbar discs",
+      "layer": "ligament",
+      "meshes": [
+        "lumbar_discs__0",
+        "lumbar_discs__1",
+        "lumbar_discs__2",
+        "lumbar_discs__3",
+        "lumbar_discs__4",
+        "lumbar_discs__5"
+      ],
+      "description": "Thick cartilage cushions between the lumbar vertebrae.",
+      "function": "Absorb load; L4-L5 and L5-S1 are where most herniations occur."
+    },
+    {
+      "id": "iliolumbar_lig",
+      "label": "Iliolumbar ligament",
+      "layer": "ligament",
+      "meshes": [
+        "iliolumbar_lig__0",
+        "iliolumbar_lig__1"
+      ],
+      "description": "Ligament from L5 to the iliac crest.",
+      "function": "Anchors the lowest vertebra to the pelvis."
+    },
+    {
+      "id": "sacroiliac_ligs",
+      "label": "Sacroiliac ligaments",
+      "layer": "ligament",
+      "meshes": [
+        "sacroiliac_ligs__0",
+        "sacroiliac_ligs__1",
+        "sacroiliac_ligs__2",
+        "sacroiliac_ligs__3"
+      ],
+      "description": "Strong ligaments around the joints between sacrum and pelvis.",
+      "function": "Make the sacroiliac joint very stable with only a few degrees of motion."
+    },
+    {
+      "id": "lumbar_vertebrae",
+      "label": "Lumbar vertebrae L1–L5",
+      "layer": "bone",
+      "meshes": [
+        "lumbar_vertebrae__0",
+        "lumbar_vertebrae__1",
+        "lumbar_vertebrae__2",
+        "lumbar_vertebrae__3",
+        "lumbar_vertebrae__4"
+      ],
+      "description": "Five large vertebrae of the lower back.",
+      "function": "Carry most of the upper body weight and allow bending."
+    },
+    {
+      "id": "sacrum",
+      "label": "Sacrum",
+      "layer": "bone",
+      "meshes": [
+        "sacrum__0"
+      ],
+      "description": "Triangular bone at the base of the spine.",
+      "function": "Transfers load from the spine to the pelvis."
+    },
+    {
+      "id": "hip_bone",
+      "label": "Hip bones",
+      "layer": "bone",
+      "meshes": [
+        "hip_bone__0",
+        "hip_bone__1"
+      ],
+      "description": "The two pelvic bones joined to the sacrum.",
+      "function": "Attachment for the back, core and gluteal muscles."
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 // Service worker de BodyMap Rehab: guarda la app para abrirla sin conexión.
 // Los vídeos (YouTube, Vimeo) siempre necesitan red y no se guardan.
-const CACHE = "bodymap-v9";
+const CACHE = "bodymap-v10";
 const SHELL = [
   "./",
   "index.html",
@@ -17,10 +17,15 @@ const SHELL = [
   "icons/icon-maskable-192.png",
   "icons/icon-maskable-512.png",
   "anatomy-viewer.js",
-  "anatomy-data.js",
   "vendor/three.module.min.js",
-  "vendor/OrbitControls.js"
+  "vendor/addons/controls/OrbitControls.js",
+  "vendor/addons/loaders/GLTFLoader.js",
+  "vendor/addons/utils/BufferGeometryUtils.js",
+  "vendor/addons/libs/meshopt_decoder.module.js",
+  "vendor/addons/environments/RoomEnvironment.js"
 ];
+// Los modelos 3D (anatomy/*.glb y *.json) no van aquí: pesan ~5 MB en total.
+// Se guardan la primera vez que se abre cada zona, con el resto de peticiones.
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(SHELL)).then(() => self.skipWaiting()));

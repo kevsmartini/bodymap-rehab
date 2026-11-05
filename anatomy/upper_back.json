@@ -1,0 +1,190 @@
+{
+  "region": "upper_back",
+  "label": "Upper back",
+  "side": "midline",
+  "units": "meters",
+  "axes": "+Y up, +Z anterior (front), +X patient left",
+  "defaultView": "back",
+  "originalCenter": [
+    0,
+    1.2378,
+    -0.0598
+  ],
+  "focusSize": [
+    0.3693,
+    0.6739,
+    0.1203
+  ],
+  "structures": [
+    {
+      "id": "trapezius_middle",
+      "label": "Trapezius, middle fibers",
+      "layer": "superficial",
+      "meshes": [
+        "trapezius_middle__0",
+        "trapezius_middle__1"
+      ],
+      "description": "Horizontal middle fibers of the trapezius.",
+      "function": "Squeeze the shoulder blades together (retraction)."
+    },
+    {
+      "id": "trapezius_lower",
+      "label": "Trapezius, lower fibers",
+      "layer": "superficial",
+      "meshes": [
+        "trapezius_lower__0",
+        "trapezius_lower__1"
+      ],
+      "description": "Lower fibers of the trapezius running up to the scapular spine.",
+      "function": "Pull the shoulder blades down and rotate them upwards for overhead reach."
+    },
+    {
+      "id": "latissimus",
+      "label": "Latissimus dorsi",
+      "layer": "superficial",
+      "meshes": [
+        "latissimus__0",
+        "latissimus__1"
+      ],
+      "description": "Broad flat muscle covering the lower and mid back, inserting on the humerus.",
+      "function": "Pulls the arm down and back; the main muscle in pull-ups and rows."
+    },
+    {
+      "id": "rhomboids",
+      "label": "Rhomboids",
+      "layer": "deep",
+      "meshes": [
+        "rhomboids__0",
+        "rhomboids__1",
+        "rhomboids__2",
+        "rhomboids__3"
+      ],
+      "description": "Rhomboid-shaped muscles between the spine and the shoulder blade.",
+      "function": "Retract and stabilise the shoulder blade."
+    },
+    {
+      "id": "serratus_post_sup",
+      "label": "Serratus posterior superior",
+      "layer": "deep",
+      "meshes": [
+        "serratus_post_sup__0",
+        "serratus_post_sup__1"
+      ],
+      "description": "Thin muscle under the rhomboids attaching to ribs 2–5.",
+      "function": "Assists lifting the ribs when breathing in."
+    },
+    {
+      "id": "erector_thoracic",
+      "label": "Erector spinae (thoracic)",
+      "layer": "deep",
+      "meshes": [
+        "erector_thoracic__0",
+        "erector_thoracic__1",
+        "erector_thoracic__2",
+        "erector_thoracic__3",
+        "erector_thoracic__4",
+        "erector_thoracic__5"
+      ],
+      "description": "Three columns of muscle running along both sides of the spine.",
+      "function": "Extend the spine and keep the trunk upright."
+    },
+    {
+      "id": "transversospinales",
+      "label": "Multifidus & semispinalis",
+      "layer": "deep",
+      "meshes": [
+        "transversospinales__0",
+        "transversospinales__1",
+        "transversospinales__2",
+        "transversospinales__3"
+      ],
+      "description": "Short deep muscles linking neighbouring vertebrae.",
+      "function": "Fine control and stability of each spinal segment."
+    },
+    {
+      "id": "thoracic_discs",
+      "label": "Thoracic discs",
+      "layer": "ligament",
+      "meshes": [
+        "thoracic_discs__0",
+        "thoracic_discs__1",
+        "thoracic_discs__2",
+        "thoracic_discs__3",
+        "thoracic_discs__4",
+        "thoracic_discs__5",
+        "thoracic_discs__6",
+        "thoracic_discs__7",
+        "thoracic_discs__8",
+        "thoracic_discs__9",
+        "thoracic_discs__10"
+      ],
+      "description": "Thin cartilage cushions between the thoracic vertebrae.",
+      "function": "Absorb load; the ribcage makes this the stiffest part of the spine."
+    },
+    {
+      "id": "thoracic_vertebrae",
+      "label": "Thoracic vertebrae T1–T12",
+      "layer": "bone",
+      "meshes": [
+        "thoracic_vertebrae__0",
+        "thoracic_vertebrae__1",
+        "thoracic_vertebrae__2",
+        "thoracic_vertebrae__3",
+        "thoracic_vertebrae__4",
+        "thoracic_vertebrae__5",
+        "thoracic_vertebrae__6",
+        "thoracic_vertebrae__7",
+        "thoracic_vertebrae__8",
+        "thoracic_vertebrae__9",
+        "thoracic_vertebrae__10",
+        "thoracic_vertebrae__11"
+      ],
+      "description": "Twelve vertebrae of the mid back, each linked to a pair of ribs.",
+      "function": "Protect the chest organs and allow rotation."
+    },
+    {
+      "id": "ribs",
+      "label": "Ribs",
+      "layer": "bone",
+      "meshes": [
+        "ribs__0",
+        "ribs__1",
+        "ribs__2",
+        "ribs__3",
+        "ribs__4",
+        "ribs__5",
+        "ribs__6",
+        "ribs__7",
+        "ribs__8",
+        "ribs__9",
+        "ribs__10",
+        "ribs__11",
+        "ribs__12",
+        "ribs__13",
+        "ribs__14",
+        "ribs__15",
+        "ribs__16",
+        "ribs__17",
+        "ribs__18",
+        "ribs__19",
+        "ribs__20",
+        "ribs__21",
+        "ribs__22",
+        "ribs__23"
+      ],
+      "description": "Twelve pairs of curved bones forming the ribcage.",
+      "function": "Protect the heart and lungs and move with breathing."
+    },
+    {
+      "id": "scapula",
+      "label": "Scapula",
+      "layer": "bone",
+      "meshes": [
+        "scapula__0",
+        "scapula__1"
+      ],
+      "description": "Shoulder blade, gliding over the back of the ribcage.",
+      "function": "Base for the shoulder; controlled by the trapezius and rhomboids."
+    }
+  ]
+}

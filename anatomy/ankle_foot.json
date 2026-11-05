@@ -1,0 +1,244 @@
+{
+  "region": "ankle_foot",
+  "label": "Ankle & foot",
+  "side": "left",
+  "units": "meters",
+  "axes": "+Y up, +Z anterior (front), +X patient left",
+  "defaultView": "front",
+  "originalCenter": [
+    0.0785,
+    0.0763,
+    -0.0355
+  ],
+  "focusSize": [
+    0.19,
+    0.2375,
+    0.19
+  ],
+  "structures": [
+    {
+      "id": "gastrocnemius",
+      "label": "Gastrocnemius",
+      "layer": "superficial",
+      "meshes": [
+        "gastrocnemius__0",
+        "gastrocnemius__1"
+      ],
+      "description": "Two-headed superficial calf muscle.",
+      "function": "Points the foot (plantarflexion), most strongly with the knee straight."
+    },
+    {
+      "id": "soleus",
+      "label": "Soleus",
+      "layer": "superficial",
+      "meshes": [
+        "soleus__0"
+      ],
+      "description": "Flat calf muscle beneath the gastrocnemius.",
+      "function": "Points the foot; works hard in running and standing."
+    },
+    {
+      "id": "achilles",
+      "label": "Achilles tendon",
+      "layer": "superficial",
+      "meshes": [
+        "achilles__0"
+      ],
+      "description": "Thickest tendon of the body, joining the calf muscles to the heel.",
+      "function": "Transmits calf force to push off; prone to tendinopathy and rupture."
+    },
+    {
+      "id": "tibialis_anterior",
+      "label": "Tibialis anterior",
+      "layer": "superficial",
+      "meshes": [
+        "tibialis_anterior__0"
+      ],
+      "description": "Muscle along the front of the shin.",
+      "function": "Lifts the foot (dorsiflexion) and turns the sole inwards."
+    },
+    {
+      "id": "fibularis",
+      "label": "Fibularis longus & brevis",
+      "layer": "superficial",
+      "meshes": [
+        "fibularis__0",
+        "fibularis__1"
+      ],
+      "description": "Muscles on the outer leg whose tendons pass behind the outer ankle bone.",
+      "function": "Turn the sole outwards and protect against ankle sprains."
+    },
+    {
+      "id": "toe_extensors",
+      "label": "Toe extensors",
+      "layer": "superficial",
+      "meshes": [
+        "toe_extensors__0",
+        "toe_extensors__1"
+      ],
+      "description": "Muscles at the front of the leg with tendons to the toes.",
+      "function": "Lift the toes and help lift the foot."
+    },
+    {
+      "id": "plantar_fascia",
+      "label": "Plantar fascia",
+      "layer": "superficial",
+      "meshes": [
+        "plantar_fascia__0"
+      ],
+      "description": "Thick band under the sole from the heel to the toes.",
+      "function": "Supports the arch; inflamed in plantar fasciitis."
+    },
+    {
+      "id": "tibialis_posterior",
+      "label": "Tibialis posterior",
+      "layer": "deep",
+      "meshes": [
+        "tibialis_posterior__0"
+      ],
+      "description": "Deep calf muscle whose tendon passes behind the inner ankle bone.",
+      "function": "Supports the arch and turns the sole inwards."
+    },
+    {
+      "id": "long_flexors",
+      "label": "Long toe flexors",
+      "layer": "deep",
+      "meshes": [
+        "long_flexors__0",
+        "long_flexors__1"
+      ],
+      "description": "Deep calf muscles with tendons running under the foot to the toes.",
+      "function": "Curl the toes and help push off."
+    },
+    {
+      "id": "foot_intrinsics",
+      "label": "Sole muscles",
+      "layer": "deep",
+      "meshes": [
+        "foot_intrinsics__0",
+        "foot_intrinsics__1",
+        "foot_intrinsics__2"
+      ],
+      "description": "Short muscles of the sole of the foot.",
+      "function": "Support the arch and control the toes."
+    },
+    {
+      "id": "lateral_ankle_ligs",
+      "label": "Lateral ankle ligaments",
+      "layer": "ligament",
+      "meshes": [
+        "lateral_ankle_ligs__0",
+        "lateral_ankle_ligs__1",
+        "lateral_ankle_ligs__2"
+      ],
+      "description": "Three ligaments on the outer ankle (ATFL, CFL, PTFL).",
+      "function": "Stop the ankle rolling inwards; the ATFL is the most sprained ligament."
+    },
+    {
+      "id": "deltoid_ligament",
+      "label": "Deltoid ligament",
+      "layer": "ligament",
+      "meshes": [
+        "deltoid_ligament__0",
+        "deltoid_ligament__1",
+        "deltoid_ligament__2"
+      ],
+      "description": "Strong fan of ligaments on the inner ankle.",
+      "function": "Stops the ankle rolling outwards."
+    },
+    {
+      "id": "syndesmosis",
+      "label": "Tibiofibular ligaments",
+      "layer": "ligament",
+      "meshes": [
+        "syndesmosis__0",
+        "syndesmosis__1"
+      ],
+      "description": "Ligaments binding the lower tibia and fibula together.",
+      "function": "Hold the ankle mortise together; injured in \"high ankle sprains\"."
+    },
+    {
+      "id": "spring_lig",
+      "label": "Spring ligament",
+      "layer": "ligament",
+      "meshes": [
+        "spring_lig__0"
+      ],
+      "description": "Ligament under the talus between the calcaneus and navicular.",
+      "function": "Supports the head of the talus and the inner arch."
+    },
+    {
+      "id": "tibia_fibula",
+      "label": "Tibia & fibula (distal)",
+      "layer": "bone",
+      "meshes": [
+        "tibia_fibula__0",
+        "tibia_fibula__1"
+      ],
+      "description": "Lower ends of the leg bones, forming the inner and outer ankle bones (malleoli).",
+      "function": "Form the ankle mortise that grips the talus."
+    },
+    {
+      "id": "talus",
+      "label": "Talus",
+      "layer": "bone",
+      "meshes": [
+        "talus__0"
+      ],
+      "description": "Bone sitting between the leg bones and the heel.",
+      "function": "Transfers body weight from the leg to the foot."
+    },
+    {
+      "id": "calcaneus",
+      "label": "Calcaneus",
+      "layer": "bone",
+      "meshes": [
+        "calcaneus__0"
+      ],
+      "description": "Heel bone, the largest bone of the foot.",
+      "function": "First contact with the ground and lever for the Achilles tendon."
+    },
+    {
+      "id": "midfoot",
+      "label": "Midfoot bones",
+      "layer": "bone",
+      "meshes": [
+        "midfoot__0",
+        "midfoot__1",
+        "midfoot__2",
+        "midfoot__3",
+        "midfoot__4"
+      ],
+      "description": "Navicular, cuboid and three cuneiform bones.",
+      "function": "Form the arches and let the foot adapt to the ground."
+    },
+    {
+      "id": "metatarsals_phalanges",
+      "label": "Metatarsals & phalanges",
+      "layer": "bone",
+      "meshes": [
+        "metatarsals_phalanges__0",
+        "metatarsals_phalanges__1",
+        "metatarsals_phalanges__2",
+        "metatarsals_phalanges__3",
+        "metatarsals_phalanges__4",
+        "metatarsals_phalanges__5",
+        "metatarsals_phalanges__6",
+        "metatarsals_phalanges__7",
+        "metatarsals_phalanges__8",
+        "metatarsals_phalanges__9",
+        "metatarsals_phalanges__10",
+        "metatarsals_phalanges__11",
+        "metatarsals_phalanges__12",
+        "metatarsals_phalanges__13",
+        "metatarsals_phalanges__14",
+        "metatarsals_phalanges__15",
+        "metatarsals_phalanges__16",
+        "metatarsals_phalanges__17",
+        "metatarsals_phalanges__18"
+      ],
+      "description": "Long bones of the forefoot and the toe bones.",
+      "function": "Spread load at push-off; site of stress fractures."
+    }
+  ]
+}
